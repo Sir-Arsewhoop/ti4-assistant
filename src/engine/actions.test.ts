@@ -45,4 +45,26 @@ describe('getAvailableActions', () => {
     expect(comp).toHaveLength(1)
     expect(comp[0].explanation).toContain('Plasma Scoring')
   })
+
+  it('returns nothing once the player has passed', () => {
+    expect(getAvailableActions(actionPhase({ passed: true }))).toEqual([])
+  })
+
+  it('hides strategic action when no strategy card is held', () => {
+    const types = getAvailableActions(actionPhase({ strategyCardIds: [] })).map((a) => a.type)
+    expect(types).not.toContain('strategicAction')
+  })
+
+  it('offers one component action per source with distinct explanations', () => {
+    const acts = getAvailableActions(actionPhase(), {
+      componentActionSources: [
+        { id: 'a', summary: 'Source A summary' },
+        { id: 'b', summary: 'Source B summary' },
+      ],
+    })
+    const comp = acts.filter((a) => a.type === 'componentAction')
+    expect(comp).toHaveLength(2)
+    expect(comp[0].explanation).toContain('Source A summary')
+    expect(comp[1].explanation).toContain('Source B summary')
+  })
 })
