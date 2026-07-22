@@ -61,7 +61,9 @@ Availability predicates:
 
 - **Strategic action**: a strategy card is held AND its primary is not yet used this round.
 - **Tactical action**: tactic pool ≥ 1.
-- **Component action**: any tracked card / tech / leader exposes an "Action:" ability.
+- **Component action**: a tracked tech / leader / relic exposes an "Action:" ability. (In v1
+  the action-card hand is a count only, so action-card component actions arrive with card data
+  in v2.)
 - **Pass**: the strategic action has already been taken this round.
 
 Reminders (examples): unresolved strategy-card secondaries, newly-qualified objectives,
