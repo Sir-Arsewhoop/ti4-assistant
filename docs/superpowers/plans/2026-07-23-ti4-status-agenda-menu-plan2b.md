@@ -760,15 +760,15 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/svelte'
 import MenuSheet from './MenuSheet.svelte'
 import { createInitialState } from '../../domain/initialState'
-import type { FactionStartingInfo } from '../../domain/types'
+import type { Faction } from '../../content/schema'
 
-const faction: FactionStartingInfo = {
-  id: 'sol', name: 'Federation of Sol', combatModifier: 0,
+const faction: Faction = {
+  id: 'sol', name: 'Federation of Sol', combatModifier: 0, abilitySummaries: ['Orbital Drop.'],
   starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], commodities: 4, tradeGoods: 0 },
 }
 const baseProps = () => ({
   open: true, onClose: vi.fn(), state: createInitialState(faction, { turnOrder: 1, speaker: false }),
-  factions: [faction as unknown as never], technologies: [], strategyCards: [], objectives: [],
+  factions: [faction], technologies: [], strategyCards: [], objectives: [],
   themeLabel: 'system', onToggleTheme: vi.fn(), onAction: vi.fn(), onNewGame: vi.fn(), onExport: vi.fn(), onImport: vi.fn(),
 })
 
