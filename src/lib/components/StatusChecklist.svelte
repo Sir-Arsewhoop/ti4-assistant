@@ -4,27 +4,27 @@
   import ExpandableItem from './ExpandableItem.svelte'
 
   interface Props { state: GameState; objectives: Objective[]; onAction: (a: GameAction) => void }
-  let { state, objectives, onAction }: Props = $props()
+  let { state: gameState, objectives, onAction }: Props = $props()
 
-  const unscored = $derived(objectives.filter((o) => !state.scoredPublicObjectiveIds.includes(o.id)))
+  const unscored = $derived(objectives.filter((o) => !gameState.scoredPublicObjectiveIds.includes(o.id)))
 
-  let drewCards = false
-  let repaired = false
+  let drewCards = $state(false)
+  let repaired = $state(false)
 
   function scorePublic(o: Objective) {
     onAction({ type: 'scorePublicObjective', objectiveId: o.id, points: o.points })
   }
   function scoreSecret() {
     onAction({ type: 'editState', patch: {
-      secretObjectives: [...state.secretObjectives, { id: `secret-${state.secretObjectives.length + 1}`, scored: true }],
-      victoryPoints: state.victoryPoints + 1,
+      secretObjectives: [...gameState.secretObjectives, { id: `secret-${gameState.secretObjectives.length + 1}`, scored: true }],
+      victoryPoints: gameState.victoryPoints + 1,
     } })
   }
   function adjustPool(pool: 'tactic' | 'fleet' | 'strategy', delta: number) {
-    onAction({ type: 'editState', patch: { command: { ...state.command, [pool]: Math.max(0, state.command[pool] + delta) } } })
+    onAction({ type: 'editState', patch: { command: { ...gameState.command, [pool]: Math.max(0, gameState.command[pool] + delta) } } })
   }
   function readyAll() {
-    onAction({ type: 'editState', patch: { planets: state.planets.map((p) => ({ ...p, exhausted: false })) } })
+    onAction({ type: 'editState', patch: { planets: gameState.planets.map((p) => ({ ...p, exhausted: false })) } })
   }
 </script>
 
@@ -44,7 +44,7 @@
   <div style="display:flex;align-items:center;gap:8px;margin:4px 0;">
     <span style="width:80px;text-transform:capitalize;">{pool}</span>
     <button onclick={() => adjustPool(pool, -1)} aria-label={`decrease ${pool}`} style="width:32px;">-</button>
-    <span style="width:24px;text-align:center;">{state.command[pool]}</span>
+    <span style="width:24px;text-align:center;">{gameState.command[pool]}</span>
     <button onclick={() => adjustPool(pool, 1)} aria-label={`increase ${pool}`} style="width:32px;">+</button>
   </div>
 {/each}
@@ -57,7 +57,7 @@
   <label><input type="checkbox" bind:checked={repaired} /> Repaired units</label>
 </div>
 
-{#if !state.custodiansTaken}
+{#if !gameState.custodiansTaken}
   <ExpandableItem title="Custodians token" summary="Taken Mecatol Rex this game yet?" detail="Once a player takes the custodians token from Mecatol Rex, every following round ends with an agenda phase." />
   <button onclick={() => onAction({ type: 'editState', patch: { custodiansTaken: true } })} style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">Mark custodians token taken</button>
 {/if}
