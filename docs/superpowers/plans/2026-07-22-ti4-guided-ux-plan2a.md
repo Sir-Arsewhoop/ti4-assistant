@@ -362,7 +362,7 @@ Expected: FAIL — cannot find module `./ExpandableItem.svelte`.
     <span style="color:var(--text-muted);transform:rotate({isOpen ? 90 : 0}deg);transition:transform .15s;">›</span>
   </button>
   {#if isOpen && detail}
-    <div style="padding:0 14px 12px;color:var(--text-muted);font-size:14px;line-height:1.5;">{detail}</div>
+    <div style="padding:0 14px 12px;color:var(--text-muted);font-size:14px;line-height:1.5;white-space:pre-line;">{detail}</div>
   {/if}
 </div>
 ```
@@ -876,6 +876,9 @@ import 'fake-indexeddb/auto'
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/svelte'
 import App from './App.svelte'
+import { saveGame } from './persistence/storage'
+import { createInitialState } from './domain/initialState'
+import { getFaction } from './content/index'
 
 beforeEach(() => localStorage.clear())
 
@@ -890,6 +893,14 @@ describe('App', () => {
     await fireEvent.click(screen.getByRole('button', { name: /Start game/ }))
     expect(screen.getByText(/Strategy phase/)).toBeTruthy()
     expect(screen.getByText(/Round 1/)).toBeTruthy()
+  })
+
+  it('resumes the saved game named by prefs.currentGameId', async () => {
+    const seeded = { ...createInitialState(getFaction('sol')!, { turnOrder: 2, speaker: true }), phase: 'action' as const }
+    await saveGame('resume-1', seeded)
+    localStorage.setItem('ti4:prefs', JSON.stringify({ theme: 'system', overviewOpen: true, currentGameId: 'resume-1' }))
+    render(App)
+    expect(await screen.findByText(/Action phase/)).toBeTruthy()
   })
 })
 ```
@@ -907,7 +918,8 @@ Expected: FAIL — the current slice `App.svelte` has no "Start game" button.
   import { createInitialState } from './domain/initialState'
   import { createGameStore } from './state/store.svelte'
   import { getAvailableActions, getReminders } from './engine/index'
-  import { saveGame } from './persistence/storage'
+  import { saveGame, loadGame } from './persistence/storage'
+  import { onMount } from 'svelte'
   import { loadPrefs, savePrefs } from './lib/prefs'
   import { applyTheme } from './lib/theme'
   import type { Theme } from './lib/prefs'
@@ -940,6 +952,16 @@ Expected: FAIL — the current slice `App.svelte` has no "Start game" button.
 
   $effect(() => {
     if (store && gameId) saveGame(gameId, store.state)
+  })
+
+  onMount(async () => {
+    if (prefs.currentGameId && !store) {
+      const loaded = await loadGame(prefs.currentGameId)
+      if (loaded) {
+        store = createGameStore(loaded)
+        gameId = prefs.currentGameId
+      }
+    }
   })
 
   function onSetupComplete(cfg: SetupConfig) {
@@ -1007,7 +1029,7 @@ Expected: FAIL — the current slice `App.svelte` has no "Start game" button.
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `npx vitest run src/App.svelte.test.ts`
-Expected: PASS (2 tests).
+Expected: PASS (3 tests).
 
 - [ ] **Step 5: Run the full suite + check + build**
 
