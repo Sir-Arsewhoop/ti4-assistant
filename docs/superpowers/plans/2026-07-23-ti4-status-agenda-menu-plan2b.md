@@ -17,7 +17,7 @@
 - Teaching via the existing `ExpandableItem` (`{title, summary, detail}`).
 - Manual/override edits and status adjustments dispatch the existing `editState` action; components **clamp at 0** before dispatching where negatives are meaningless (command pools, trade goods, commodities, VP).
 - Theme-aware: colors from the `src/app.css` variables (already defined).
-- `npm run check` must stay at **0 errors / 0 warnings**; do not reintroduce the `state_referenced_locally` pattern (`$state` seeded from a prop) — wrap any such seed in `untrack`.
+- `npm run check` must stay at **0 errors / 0 warnings**; do not reintroduce the `state_referenced_locally` pattern (`$state` seeded from a prop) — wrap any such seed in `untrack`. Also: a component that takes a prop literally named `state` AND uses a `$state`/`$derived` rune triggers a name-collision warning — alias the prop internally (`let { state: gameState, … } = $props()`) and read `gameState` everywhere; the public prop stays `state`.
 - Tests colocated; `npm test` runs `vitest run`.
 
 ---
@@ -349,7 +349,7 @@ Expected: FAIL — cannot find module `./AgendaHelper.svelte`.
   import type { GameState, GameAction } from '../../domain/types'
 
   interface Props { state: GameState; onAction: (a: GameAction) => void }
-  let { state, onAction }: Props = $props()
+  let { state: gameState, onAction }: Props = $props()
 
   let forV = $state(0)
   let against = $state(0)
@@ -359,7 +359,7 @@ Expected: FAIL — cannot find module `./AgendaHelper.svelte`.
 
 <h2 style="font-size:18px;font-weight:500;">Agenda phase</h2>
 
-{#if !state.custodiansTaken}
+{#if !gameState.custodiansTaken}
   <p style="color:var(--text-muted);font-size:14px;">The agenda phase begins only after a player takes the Mecatol Rex custodians token.</p>
   <button onclick={() => onAction({ type: 'editState', patch: { custodiansTaken: true } })} style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">Mark custodians token taken</button>
 {:else}
@@ -823,7 +823,7 @@ Expected: FAIL — cannot find module `./MenuSheet.svelte`.
     onExport: () => void
     onImport: (file: File) => void
   }
-  let { open, onClose, state, factions, technologies, strategyCards, objectives, themeLabel, onToggleTheme, onAction, onNewGame, onExport, onImport }: Props = $props()
+  let { open, onClose, state: gameState, factions, technologies, strategyCards, objectives, themeLabel, onToggleTheme, onAction, onNewGame, onExport, onImport }: Props = $props()
 
   type Section = 'reference' | 'board' | 'games'
   let section = $state<Section>('reference')
@@ -852,7 +852,7 @@ Expected: FAIL — cannot find module `./MenuSheet.svelte`.
       {#if section === 'reference'}
         <ReferenceBrowser {factions} {technologies} {strategyCards} {objectives} />
       {:else if section === 'board'}
-        <BoardEditor {state} {technologies} {onAction} />
+        <BoardEditor state={gameState} {technologies} {onAction} />
       {:else}
         <GamesSheet {onNewGame} {onExport} {onImport} />
       {/if}
