@@ -51,15 +51,19 @@ export function applyAction(state: GameState, action: GameAction): GameState {
     }
 
     case 'advancePhase': {
-      const next = NEXT_PHASE[state.phase]
-      const roundInc = state.phase === 'status' ? 1 : 0
-      const resetForNewRound = next === 'strategy'
+      const next: Phase =
+        state.phase === 'status'
+          ? state.custodiansTaken
+            ? 'agenda'
+            : 'strategy'
+          : NEXT_PHASE[state.phase]
+      const enteringNewRound = next === 'strategy' && state.phase !== 'setup'
       return {
         ...state,
         phase: next,
-        round: state.round + roundInc,
-        strategyPrimaryUsed: resetForNewRound ? false : state.strategyPrimaryUsed,
-        passed: resetForNewRound ? false : state.passed,
+        round: state.round + (enteringNewRound ? 1 : 0),
+        strategyPrimaryUsed: next === 'strategy' ? false : state.strategyPrimaryUsed,
+        passed: next === 'strategy' ? false : state.passed,
         log: log(state, `Advanced to ${next} phase`),
       }
     }

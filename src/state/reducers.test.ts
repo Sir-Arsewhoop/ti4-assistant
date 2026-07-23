@@ -46,13 +46,27 @@ describe('applyAction', () => {
     expect(s.victoryPoints).toBe(1)
   })
 
-  it('advancePhase cycles and increments the round on status->strategy', () => {
-    let s = base({ phase: 'action', strategyPrimaryUsed: true, passed: true })
-    s = applyAction(s, { type: 'advancePhase' }) // action -> status
-    expect(s.phase).toBe('status')
-    s = applyAction(s, { type: 'advancePhase' }) // status -> strategy (new round)
+  it('advancePhase status->strategy (no custodians) bumps the round and resets flags', () => {
+    let s = base({ phase: 'status', strategyPrimaryUsed: true, passed: true, custodiansTaken: false })
+    s = applyAction(s, { type: 'advancePhase' })
     expect(s.phase).toBe('strategy')
     expect(s.round).toBe(2)
+    expect(s.strategyPrimaryUsed).toBe(false)
+    expect(s.passed).toBe(false)
+  })
+
+  it('advancePhase status->agenda when custodians taken, without bumping the round', () => {
+    let s = base({ phase: 'status', round: 3, custodiansTaken: true })
+    s = applyAction(s, { type: 'advancePhase' })
+    expect(s.phase).toBe('agenda')
+    expect(s.round).toBe(3)
+  })
+
+  it('advancePhase agenda->strategy bumps the round and resets flags', () => {
+    let s = base({ phase: 'agenda', round: 3, strategyPrimaryUsed: true, passed: true, custodiansTaken: true })
+    s = applyAction(s, { type: 'advancePhase' })
+    expect(s.phase).toBe('strategy')
+    expect(s.round).toBe(4)
     expect(s.strategyPrimaryUsed).toBe(false)
     expect(s.passed).toBe(false)
   })

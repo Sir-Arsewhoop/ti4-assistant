@@ -23,6 +23,7 @@ export function createInitialState(
     leaders: { agentUnlocked: false, commanderUnlocked: false, heroUnlocked: false },
     actionCardCount: 0,
     passed: false,
+    custodiansTaken: false,
     log: [],
   }
 }

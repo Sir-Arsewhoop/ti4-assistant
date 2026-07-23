@@ -39,6 +39,7 @@ export type GameState = {
   leaders: LeaderState
   actionCardCount: number
   passed: boolean
+  custodiansTaken: boolean
   log: LogEntry[]
 }
 

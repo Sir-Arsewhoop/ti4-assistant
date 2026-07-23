@@ -31,6 +31,7 @@ describe('createInitialState', () => {
     expect(s.commodities).toBe(4)
     expect(s.victoryPoints).toBe(0)
     expect(s.speaker).toBe(true)
+    expect(s.custodiansTaken).toBe(false)
   })
 
   it('deep-copies planets so the faction template is not mutated', () => {
