@@ -38,4 +38,17 @@ describe('App', () => {
     render(App)
     expect(await screen.findByText(/Action phase/)).toBeTruthy()
   })
+
+  it('re-renders the overview header when an action is dispatched', async () => {
+    render(App)
+    await fireEvent.click(screen.getByRole('button', { name: /Start game/ }))
+    // strategy -> action
+    await fireEvent.click(screen.getByRole('button', { name: /Advance phase/ }))
+    expect(screen.getByText(/Action phase/)).toBeTruthy()
+    // overview header (open by default) shows the starting tactic pool of 3
+    expect(screen.getByText(/Tactic 3/)).toBeTruthy()
+    // take the tactical action -> reducer decrements the tactic pool -> header re-renders
+    await fireEvent.click(screen.getByRole('button', { name: /Take: Tactical action/ }))
+    expect(screen.getByText(/Tactic 2/)).toBeTruthy()
+  })
 })
