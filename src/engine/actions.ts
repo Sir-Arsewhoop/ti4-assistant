@@ -30,6 +30,7 @@ export function getAvailableActions(
       type: 'componentAction',
       label: 'Component action',
       explanation: src.summary,
+      sourceId: src.id,
     })
   }
 

@@ -70,6 +70,7 @@ export type AvailableAction = {
   type: 'strategicAction' | 'tacticalAction' | 'componentAction' | 'pass'
   label: string
   explanation: string
+  sourceId?: string
 }
 
 export type Reminder = { id: string; severity: 'info' | 'warn'; text: string }

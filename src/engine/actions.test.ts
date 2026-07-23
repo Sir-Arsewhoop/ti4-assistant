@@ -66,5 +66,7 @@ describe('getAvailableActions', () => {
     expect(comp).toHaveLength(2)
     expect(comp[0].explanation).toContain('Source A summary')
     expect(comp[1].explanation).toContain('Source B summary')
+    expect(comp[0].sourceId).toBe('a')
+    expect(comp[1].sourceId).toBe('b')
   })
 })

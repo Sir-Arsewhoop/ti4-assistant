@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { applyAction } from './reducers'
 import { createInitialState } from '../domain/initialState'
-import type { FactionStartingInfo, GameState } from '../domain/types'
+import type { FactionStartingInfo, GameAction, GameState } from '../domain/types'
 
 const faction: FactionStartingInfo = {
   id: 'sol', name: 'Federation of Sol', combatModifier: 0,
@@ -62,5 +62,10 @@ describe('applyAction', () => {
     const s = applyAction(before, { type: 'editState', patch: { tradeGoods: 9 } })
     expect(s.tradeGoods).toBe(9)
     expect(s.log).toHaveLength(before.log.length)
+  })
+
+  it('returns the same state object for an unknown action type', () => {
+    const s = base()
+    expect(applyAction(s, { type: 'nope' } as unknown as GameAction)).toBe(s)
   })
 })

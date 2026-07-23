@@ -66,5 +66,8 @@ export function applyAction(state: GameState, action: GameAction): GameState {
 
     case 'editState':
       return { ...state, ...action.patch }
+
+    default:
+      return state
   }
 }
