@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   interface Props {
     title: string
     summary: string
@@ -6,7 +7,7 @@
     open?: boolean
   }
   let { title, summary, detail = '', open = false }: Props = $props()
-  let isOpen = $state(open)
+  let isOpen = $state(untrack(() => open))
 </script>
 
 <div style="border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);margin-bottom:8px;">

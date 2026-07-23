@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import type { Faction } from '../../content/schema'
   import type { SetupConfig } from '../ui-types'
   interface Props { factions: Faction[]; onComplete: (cfg: SetupConfig) => void }
   let { factions, onComplete }: Props = $props()
 
-  let factionId = $state(factions[0]?.id ?? '')
+  let factionId = $state(untrack(() => factions[0]?.id ?? ''))
   let playerCount = $state(6)
   let turnOrder = $state(1)
   let speaker = $state(false)
@@ -12,7 +13,7 @@
   const seats = $derived(Array.from({ length: playerCount }, (_, i) => i + 1))
 
   function start() {
-    onComplete({ factionId, playerCount, turnOrder, speaker })
+    onComplete({ factionId, playerCount, turnOrder: Math.min(turnOrder, playerCount), speaker })
   }
 </script>
 
