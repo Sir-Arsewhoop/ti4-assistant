@@ -56,4 +56,20 @@ describe('content registry', () => {
       for (const id of f.starting.techIds) expect(techIds.has(id)).toBe(true)
     }
   })
+
+  it('exposes the 63-planet catalog (33 base + 30 PoK, 4 legendary, Mecatol present)', () => {
+    expect(content.planets).toHaveLength(63)
+    expect(content.planets.filter((p) => p.expansion === 'base')).toHaveLength(33)
+    expect(content.planets.filter((p) => p.expansion === 'pok')).toHaveLength(30)
+    expect(content.planets.filter((p) => p.legendary)).toHaveLength(4)
+    expect(content.planets.some((p) => p.name === 'Mecatol Rex')).toBe(true)
+    for (const p of content.planets.filter((p) => p.legendary)) expect(p.legendaryAbility).toBeTruthy()
+  })
+
+  it('catalog ids are unique and disjoint from faction home-planet ids', () => {
+    const ids = content.planets.map((p) => p.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    const homeIds = new Set(content.factions.flatMap((f) => f.starting.planets.map((pl) => pl.id)))
+    for (const id of ids) expect(homeIds.has(id)).toBe(false)
+  })
 })

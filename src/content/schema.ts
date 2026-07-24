@@ -13,6 +13,7 @@ export const planetSchema = z.object({
   influence: z.number().int().min(0),
   exhausted: z.boolean(),
   trait: z.enum(['cultural', 'industrial', 'hazardous']).optional(),
+  techSpecialty: z.enum(['red', 'blue', 'yellow', 'green']).optional(),
 })
 
 export const strategyCardSchema = z.object({
@@ -58,3 +59,16 @@ export const objectiveSchema = z.object({
   summary: z.string(),
 })
 export type Objective = z.infer<typeof objectiveSchema>
+
+export const planetCatalogSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  resources: z.number().int().min(0),
+  influence: z.number().int().min(0),
+  trait: z.enum(['cultural', 'industrial', 'hazardous']).optional(),
+  techSpecialty: z.enum(['red', 'blue', 'yellow', 'green']).optional(),
+  legendary: z.boolean(),
+  legendaryAbility: z.string().optional(),
+  expansion: z.enum(['base', 'pok']),
+})
+export type PlanetCatalogEntry = z.infer<typeof planetCatalogSchema>
