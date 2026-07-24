@@ -106,7 +106,7 @@ export const factions: Faction[] = [
     ],
     starting: {
       tokens, techIds: ['neural-motivator', 'plasma-scoring'],
-      planets: [p('l1z1x-home', '[0.0.0]', 5, 0)], // verify planet name/values against faction sheet
+      planets: [p('l1z1x-home', '[0.0.0]', 5, 0)], // [0.0.0] 5/0 confirmed via wiki + AsyncTI4
       startingUnits: ['1 Dreadnought', '1 Carrier', '3 Fighters', '5 Infantry', '1 Space Dock', '1 PDS'],
       commodities: 2, tradeGoods: 0,
     },
