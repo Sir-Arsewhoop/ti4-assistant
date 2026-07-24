@@ -38,4 +38,9 @@ describe('persistence', () => {
   it('throws importing malformed JSON', () => {
     expect(() => importGame('{not json')).toThrow()
   })
+
+  it('throws importing structurally-invalid JSON (valid JSON, wrong shape)', () => {
+    expect(() => importGame('{}')).toThrow()
+    expect(() => importGame('{"phase":"strategy"}')).toThrow()
+  })
 })

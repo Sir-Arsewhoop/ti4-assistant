@@ -33,5 +33,9 @@ export function exportGame(state: GameState): string {
 }
 
 export function importGame(json: string): GameState {
-  return JSON.parse(json) as GameState
+  const parsed = JSON.parse(json) as GameState
+  if (typeof parsed?.phase !== 'string' || !parsed.command || !Array.isArray(parsed.planets)) {
+    throw new Error('Not a valid TI4 game save')
+  }
+  return parsed
 }
