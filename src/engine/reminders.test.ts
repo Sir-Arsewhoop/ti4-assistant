@@ -41,4 +41,16 @@ describe('getReminders', () => {
     expect(fleet?.severity).toBe('info')
     expect(fleet?.text).toContain('5')
   })
+
+  it('reminds about the Technology strategy card only when held', () => {
+    expect(getReminders(actionPhase({ strategyCardIds: [7] })).map((r) => r.id)).toContain('tech-card')
+    expect(getReminders(actionPhase({ strategyCardIds: [1] })).map((r) => r.id)).not.toContain('tech-card')
+  })
+
+  it('surfaces a researchable-count reminder only when a positive count is supplied', () => {
+    const r = getReminders(actionPhase(), { researchableCount: 3 })
+    expect(r.find((x) => x.id === 'researchable')?.text).toContain('3')
+    expect(getReminders(actionPhase(), { researchableCount: 0 }).map((x) => x.id)).not.toContain('researchable')
+    expect(getReminders(actionPhase()).map((x) => x.id)).not.toContain('researchable')
+  })
 })

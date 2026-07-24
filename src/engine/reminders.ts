@@ -1,6 +1,6 @@
 import type { GameState, Reminder } from '../domain/types'
 
-export function getReminders(state: GameState): Reminder[] {
+export function getReminders(state: GameState, opts: { researchableCount?: number } = {}): Reminder[] {
   if (state.phase !== 'action') return []
   const out: Reminder[] = []
 
@@ -18,6 +18,23 @@ export function getReminders(state: GameState): Reminder[] {
   }
 
   out.push({ id: 'fleet-pool', severity: 'info', text: `Fleet pool: ${state.command.fleet} (your non-fighter ship limit per system).` })
+
+  if (state.strategyCardIds.includes(7)) {
+    out.push({
+      id: 'tech-card',
+      severity: 'info',
+      text: 'You hold the Technology card: its primary researches one technology (a second costs 6 resources); after you play it, other players may pay 4 resources and a strategy token to research one.',
+    })
+  }
+
+  const researchable = opts.researchableCount ?? 0
+  if (researchable > 0) {
+    out.push({
+      id: 'researchable',
+      severity: 'info',
+      text: `${researchable} technolog${researchable === 1 ? 'y is' : 'ies are'} researchable now — use "Research technology".`,
+    })
+  }
 
   return out
 }
