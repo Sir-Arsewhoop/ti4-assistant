@@ -2,7 +2,7 @@
   import { content, getFaction } from './content/index'
   import { createInitialState } from './domain/initialState'
   import { createGameStore } from './state/store.svelte'
-  import { getAvailableActions, getReminders } from './engine/index'
+  import { getAvailableActions, getReminders, getResearchableTechs } from './engine/index'
   import { saveGame, loadGame, exportGame, importGame } from './persistence/storage'
   import { onMount, untrack } from 'svelte'
   import { loadPrefs, savePrefs } from './lib/prefs'
@@ -18,6 +18,7 @@
   import StatusChecklist from './lib/components/StatusChecklist.svelte'
   import AgendaHelper from './lib/components/AgendaHelper.svelte'
   import MenuSheet from './lib/components/MenuSheet.svelte'
+  import ResearchPicker from './lib/components/ResearchPicker.svelte'
 
   let prefs = $state(loadPrefs())
   applyTheme(untrack(() => prefs.theme))
@@ -27,6 +28,7 @@
   let seq = 0
   let menuOpen = $state(false)
   let importError = $state('')
+  let researchOpen = $state(false)
 
   // Plain (non-rune) helper: reading `.state` directly off the nullable `store` binding inside
   // a $derived expression trips a svelte-check/svelte2tsx narrowing bug (unrelated to runtime,
@@ -45,8 +47,10 @@
           .map((t) => ({ id: t.id, summary: t.summary }))
       : [],
   )
+  const researchResults = $derived(gameState ? getResearchableTechs(gameState, content.technologies) : [])
+  const researchableIds = $derived(new Set(researchResults.filter((r) => r.researchable).map((r) => r.techId)))
   const actions = $derived(gameState ? getAvailableActions(gameState, { componentActionSources }) : [])
-  const reminders = $derived(gameState ? getReminders(gameState) : [])
+  const reminders = $derived(gameState ? getReminders(gameState, { researchableCount: researchableIds.size }) : [])
 
   $effect(() => {
     // $state.snapshot: store.state is a deeply-reactive Proxy, which structured-clone
@@ -118,6 +122,7 @@
 
   function act(a: AvailableAction) {
     if (!store) return
+    if (a.type === 'research') { researchOpen = true; return }
     if (a.type === 'componentAction') store.dispatch({ type: 'componentAction', sourceId: a.sourceId ?? '', summary: a.explanation })
     else store.dispatch({ type: a.type } as GameAction)
   }
@@ -175,4 +180,13 @@
     onExport={exportCurrent}
     onImport={importFile}
   />
+  {#if researchOpen && gameState}
+    <ResearchPicker
+      technologies={content.technologies}
+      ownedIds={new Set(gameState.technologyIds)}
+      {researchableIds}
+      onResearch={(techId, name) => { store?.dispatch({ type: 'researchTechnology', techId, name }); researchOpen = false }}
+      onClose={() => (researchOpen = false)}
+    />
+  {/if}
 {/if}

@@ -8,6 +8,7 @@
     strategicAction: 'Resolve your strategy card\'s primary ability.',
     tacticalAction: 'Activate a system to move, fight, then produce.',
     componentAction: 'Play an "Action:" ability from a card, tech, or leader.',
+    research: 'Add a technology; researchable ones are highlighted.',
     pass: 'Stop taking turns for the rest of this action phase.',
   }
 </script>
