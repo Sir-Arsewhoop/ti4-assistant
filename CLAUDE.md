@@ -58,6 +58,9 @@ Full history lives in `docs/superpowers/specs/` and `docs/superpowers/plans/` (e
 
 ## Next cycles (each: brainstorm → spec → plan → build)
 
-Trait-aware reminders (planets now carry traits); objectives (full public I/II + secret
-decks); full tech tree; leaders / mechs / faction-tech (faction depth — the same wiki
-`{{Main Infobox 1}}` exposes all of it); action + agenda card references.
+1. Full tech tree
+2. Objectives (full public I/II + secret decks)
+3. Leaders / mechs / faction-tech (faction depth — the same wiki `{{Main Infobox 1}}`
+   exposes all of it)
+4. Trait-aware reminders (planets now carry traits)
+5. Action + agenda card references
