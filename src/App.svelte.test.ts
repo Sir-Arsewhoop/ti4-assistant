@@ -51,4 +51,19 @@ describe('App', () => {
     await fireEvent.click(screen.getByRole('button', { name: /Take: Tactical action/ }))
     expect(screen.getByText(/Tactic 2/)).toBeTruthy()
   })
+
+  it('routes to the status checklist after advancing there', async () => {
+    render(App)
+    await fireEvent.click(screen.getByRole('button', { name: /Start game/ }))
+    await fireEvent.click(screen.getByRole('button', { name: /Advance phase/ })) // strategy -> action
+    await fireEvent.click(screen.getByRole('button', { name: /Advance phase/ })) // action -> status
+    expect(screen.getByText(/Status phase/)).toBeTruthy()
+  })
+
+  it('opens the menu from the bottom bar', async () => {
+    render(App)
+    await fireEvent.click(screen.getByRole('button', { name: /Start game/ }))
+    await fireEvent.click(screen.getByRole('button', { name: /Open menu/ }))
+    expect(screen.getByRole('button', { name: /Close menu/ })).toBeTruthy()
+  })
 })

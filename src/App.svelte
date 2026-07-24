@@ -3,7 +3,7 @@
   import { createInitialState } from './domain/initialState'
   import { createGameStore } from './state/store.svelte'
   import { getAvailableActions, getReminders } from './engine/index'
-  import { saveGame, loadGame } from './persistence/storage'
+  import { saveGame, loadGame, exportGame, importGame } from './persistence/storage'
   import { onMount, untrack } from 'svelte'
   import { loadPrefs, savePrefs } from './lib/prefs'
   import { applyTheme } from './lib/theme'
@@ -15,6 +15,9 @@
   import ActionPanel from './lib/components/ActionPanel.svelte'
   import StrategyPhase from './lib/components/StrategyPhase.svelte'
   import SetupWizard from './lib/components/SetupWizard.svelte'
+  import StatusChecklist from './lib/components/StatusChecklist.svelte'
+  import AgendaHelper from './lib/components/AgendaHelper.svelte'
+  import MenuSheet from './lib/components/MenuSheet.svelte'
 
   let prefs = $state(loadPrefs())
   applyTheme(untrack(() => prefs.theme))
@@ -22,6 +25,8 @@
   let store: ReturnType<typeof createGameStore> | null = $state(null)
   let gameId: string | null = $state(null)
   let seq = 0
+  let menuOpen = $state(false)
+  let importError = $state('')
 
   // Plain (non-rune) helper: reading `.state` directly off the nullable `store` binding inside
   // a $derived expression trips a svelte-check/svelte2tsx narrowing bug (unrelated to runtime,
@@ -69,6 +74,37 @@
     prefs = savePrefs({ currentGameId: gameId })
   }
 
+  function newGame() {
+    prefs = savePrefs({ currentGameId: null })
+    store = null
+    gameId = null
+    menuOpen = false
+  }
+
+  function exportCurrent() {
+    if (!store) return
+    const blob = new Blob([exportGame(store.state)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${gameId ?? 'ti4-game'}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function importFile(file: File) {
+    try {
+      const loaded = importGame(await file.text())
+      store = createGameStore(loaded)
+      gameId = `game-import-${++seq}`
+      prefs = savePrefs({ currentGameId: gameId })
+      importError = ''
+      menuOpen = false
+    } catch {
+      importError = 'Could not import that file.'
+    }
+  }
+
   function toggleOverview() {
     prefs = savePrefs({ overviewOpen: !prefs.overviewOpen })
   }
@@ -105,9 +141,12 @@
     {:else if gameState.phase === 'action'}
       <h2 style="font-size:18px;font-weight:500;">Action phase — what can I do now?</h2>
       <ActionPanel {actions} onAct={act} />
+    {:else if gameState.phase === 'status'}
+      <StatusChecklist state={gameState} objectives={content.objectives} onAction={(a) => store?.dispatch(a)} />
+    {:else if gameState.phase === 'agenda'}
+      <AgendaHelper state={gameState} onAction={(a) => store?.dispatch(a)} />
     {:else}
       <h2 style="font-size:18px;font-weight:500;">{gameState.phase} phase</h2>
-      <p style="color:var(--text-muted);font-size:14px;">Detailed UI arrives in Plan 2b — use Advance to continue.</p>
     {/if}
 
     <ReminderList {reminders} />
@@ -116,6 +155,23 @@
   <nav style="position:sticky;bottom:0;display:flex;gap:8px;padding:12px 16px;background:var(--surface-2);border-top:1px solid var(--border);">
     <button onclick={() => store?.undo()} disabled={!store.canUndo()} style="flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">Undo</button>
     <button onclick={() => store?.dispatch({ type: 'advancePhase' })} style="flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">Advance phase</button>
-    <button onclick={cycleTheme} aria-label="Toggle theme" style="padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">Theme: {prefs.theme}</button>
+    <button onclick={() => (menuOpen = true)} aria-label="Open menu" style="padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">☰</button>
   </nav>
+
+  {#if importError}<p style="color:var(--warn);text-align:center;font-size:13px;">{importError}</p>{/if}
+  <MenuSheet
+    open={menuOpen}
+    onClose={() => (menuOpen = false)}
+    state={gameState}
+    factions={content.factions}
+    technologies={content.technologies}
+    strategyCards={content.strategyCards}
+    objectives={content.objectives}
+    themeLabel={prefs.theme}
+    onToggleTheme={cycleTheme}
+    onAction={(a) => store?.dispatch(a)}
+    onNewGame={newGame}
+    onExport={exportCurrent}
+    onImport={importFile}
+  />
 {/if}
