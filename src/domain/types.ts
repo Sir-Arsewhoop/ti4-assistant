@@ -8,6 +8,8 @@ export type Planet = {
   resources: number
   influence: number
   exhausted: boolean
+  trait?: 'cultural' | 'industrial' | 'hazardous'
+  techSpecialty?: 'red' | 'blue' | 'yellow' | 'green'
 }
 
 export type SecretObjective = { id: string; scored: boolean }
@@ -65,6 +67,8 @@ export type GameAction =
   | { type: 'gainTradeGoods'; amount: number }
   | { type: 'exhaustPlanet'; planetId: string }
   | { type: 'scorePublicObjective'; objectiveId: string; points: number }
+  | { type: 'gainPlanet'; planet: Planet }
+  | { type: 'removePlanet'; planetId: string }
   | { type: 'editState'; patch: Partial<GameState> }
 
 export type AvailableAction = {

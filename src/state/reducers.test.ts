@@ -82,4 +82,23 @@ describe('applyAction', () => {
     const s = base()
     expect(applyAction(s, { type: 'nope' } as unknown as GameAction)).toBe(s)
   })
+
+  it('gainPlanet adds a planet and is idempotent by id', () => {
+    const planet = { id: 'meer', name: 'Meer', resources: 0, influence: 4, exhausted: false, trait: 'hazardous' as const }
+    const s1 = applyAction(base(), { type: 'gainPlanet', planet })
+    expect(s1.planets.some((p) => p.id === 'meer')).toBe(true)
+    expect(s1.log.at(-1)?.summary).toBe('Gained Meer')
+    const s2 = applyAction(s1, { type: 'gainPlanet', planet })
+    expect(s2.planets.filter((p) => p.id === 'meer')).toHaveLength(1)
+  })
+
+  it('removePlanet removes by id and no-ops when absent', () => {
+    const planet = { id: 'meer', name: 'Meer', resources: 0, influence: 4, exhausted: false }
+    const withPlanet = applyAction(base(), { type: 'gainPlanet', planet })
+    const removed = applyAction(withPlanet, { type: 'removePlanet', planetId: 'meer' })
+    expect(removed.planets.some((p) => p.id === 'meer')).toBe(false)
+    expect(removed.log.at(-1)?.summary).toBe('Removed Meer')
+    const noop = applyAction(base(), { type: 'removePlanet', planetId: 'nope' })
+    expect(noop.planets).toEqual(base().planets)
+  })
 })

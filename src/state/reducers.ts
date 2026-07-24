@@ -68,6 +68,17 @@ export function applyAction(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'gainPlanet': {
+      if (state.planets.some((p) => p.id === action.planet.id)) return state
+      return { ...state, planets: [...state.planets, action.planet], log: log(state, `Gained ${action.planet.name}`) }
+    }
+
+    case 'removePlanet': {
+      const target = state.planets.find((p) => p.id === action.planetId)
+      if (!target) return state
+      return { ...state, planets: state.planets.filter((p) => p.id !== action.planetId), log: log(state, `Removed ${target.name}`) }
+    }
+
     case 'editState':
       return { ...state, ...action.patch }
 
