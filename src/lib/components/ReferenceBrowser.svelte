@@ -13,7 +13,13 @@
 
   const all = $derived<Entry[]>(
     kind === 'faction'
-      ? factions.map((f) => ({ id: f.id, title: f.name, summary: f.abilitySummaries[0] ?? '', detail: f.abilitySummaries.join('\n') }))
+      ? factions.map((f) => {
+          const techName = (id: string) => technologies.find((t) => t.id === id)?.name ?? id
+          const planets = f.starting.planets.map((pl) => `${pl.name} (${pl.resources}/${pl.influence})`).join(', ') || 'none'
+          const techs = f.starting.techIds.map(techName).join(', ') || 'none'
+          const setup = `Home planets: ${planets}\nStarting tech: ${techs}\nStarting units: ${f.starting.startingUnits.join(', ')}`
+          return { id: f.id, title: f.name, summary: f.abilitySummaries[0] ?? '', detail: `${f.abilitySummaries.join('\n')}\n\n${setup}` }
+        })
       : kind === 'tech'
         ? technologies.map((t) => ({ id: t.id, title: t.name, summary: t.summary, detail: `${t.color} · prereqs: ${t.prerequisites.join(', ') || 'none'}\n${t.summary}` }))
         : kind === 'strategy'

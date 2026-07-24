@@ -4,8 +4,8 @@ import SetupWizard from './SetupWizard.svelte'
 import type { Faction } from '../../content/schema'
 
 const factions: Faction[] = [
-  { id: 'jol-nar', name: 'Universities of Jol-Nar', combatModifier: -1, abilitySummaries: ['x'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], commodities: 4, tradeGoods: 0 } },
-  { id: 'sol', name: 'Federation of Sol', combatModifier: 0, abilitySummaries: ['x'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], commodities: 4, tradeGoods: 0 } },
+  { id: 'jol-nar', name: 'Universities of Jol-Nar', expansion: 'base', combatModifier: -1, abilitySummaries: ['x'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], startingUnits: ['1 Space Dock'], commodities: 4, tradeGoods: 0 } },
+  { id: 'sol', name: 'Federation of Sol', expansion: 'base', combatModifier: 0, abilitySummaries: ['x'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], startingUnits: ['1 Space Dock'], commodities: 4, tradeGoods: 0 } },
 ]
 
 describe('SetupWizard', () => {

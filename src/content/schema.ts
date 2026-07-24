@@ -12,6 +12,7 @@ export const planetSchema = z.object({
   resources: z.number().int().min(0),
   influence: z.number().int().min(0),
   exhausted: z.boolean(),
+  trait: z.enum(['cultural', 'industrial', 'hazardous']).optional(),
 })
 
 export const strategyCardSchema = z.object({
@@ -35,12 +36,14 @@ export type Technology = z.infer<typeof technologySchema>
 export const factionSchema = z.object({
   id: z.string(),
   name: z.string(),
+  expansion: z.enum(['base', 'pok']),
   combatModifier: z.number().int(),
   abilitySummaries: z.array(z.string()).min(1),
   starting: z.object({
     tokens: commandPoolsSchema,
     techIds: z.array(z.string()),
     planets: z.array(planetSchema),
+    startingUnits: z.array(z.string()).min(1),
     commodities: z.number().int().min(0),
     tradeGoods: z.number().int().min(0),
   }),

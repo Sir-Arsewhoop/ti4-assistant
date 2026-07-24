@@ -5,8 +5,8 @@ import { createInitialState } from '../../domain/initialState'
 import type { Faction } from '../../content/schema'
 
 const faction: Faction = {
-  id: 'sol', name: 'Federation of Sol', combatModifier: 0, abilitySummaries: ['Orbital Drop.'],
-  starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], commodities: 4, tradeGoods: 0 },
+  id: 'sol', name: 'Federation of Sol', expansion: 'base', combatModifier: 0, abilitySummaries: ['Orbital Drop.'],
+  starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], startingUnits: ['1 Space Dock'], commodities: 4, tradeGoods: 0 },
 }
 const baseProps = () => ({
   open: true, onClose: vi.fn(), state: createInitialState(faction, { turnOrder: 1, speaker: false }),

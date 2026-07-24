@@ -4,8 +4,8 @@ import ReferenceBrowser from './ReferenceBrowser.svelte'
 import type { Faction, Technology, StrategyCard, Objective } from '../../content/schema'
 
 const factions: Faction[] = [
-  { id: 'jol-nar', name: 'Universities of Jol-Nar', combatModifier: -1, abilitySummaries: ['Fragile: -1 combat.'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], commodities: 4, tradeGoods: 0 } },
-  { id: 'sol', name: 'Federation of Sol', combatModifier: 0, abilitySummaries: ['Orbital Drop.'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], commodities: 4, tradeGoods: 0 } },
+  { id: 'jol-nar', name: 'Universities of Jol-Nar', expansion: 'base', combatModifier: -1, abilitySummaries: ['Fragile: -1 combat.'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: ['neural-motivator'], planets: [{ id: 'jol', name: 'Jol', resources: 1, influence: 2, exhausted: false }], startingUnits: ['2 Carriers'], commodities: 4, tradeGoods: 0 } },
+  { id: 'sol', name: 'Federation of Sol', expansion: 'base', combatModifier: 0, abilitySummaries: ['Orbital Drop.'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], startingUnits: ['1 Space Dock'], commodities: 4, tradeGoods: 0 } },
 ]
 const technologies: Technology[] = [
   { id: 'plasma-scoring', name: 'Plasma Scoring', color: 'red', prerequisites: [], summary: 'Add 1 die.', hasAction: false },
@@ -27,5 +27,12 @@ describe('ReferenceBrowser', () => {
     render(ReferenceBrowser, { props: { factions, technologies, strategyCards, objectives } })
     await fireEvent.click(screen.getByRole('button', { name: /Tech/ }))
     expect(screen.getByText('Plasma Scoring')).toBeTruthy()
+  })
+
+  it('shows a faction\'s starting units and planets when expanded', async () => {
+    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, objectives } })
+    await fireEvent.click(screen.getByText('Universities of Jol-Nar'))
+    expect(screen.getByText(/2 Carriers/)).toBeTruthy()
+    expect(screen.getByText(/Home planets: Jol/)).toBeTruthy()
   })
 })
