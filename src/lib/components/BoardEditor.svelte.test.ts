@@ -10,7 +10,7 @@ const faction: FactionStartingInfo = {
   starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [{ id: 'jord', name: 'Jord', resources: 4, influence: 2, exhausted: false }], commodities: 4, tradeGoods: 0 },
 }
 const technologies: Technology[] = [
-  { id: 'plasma-scoring', name: 'Plasma Scoring', color: 'red', prerequisites: [], summary: 'Add 1 die.', hasAction: false },
+  { id: 'plasma-scoring', name: 'Plasma Scoring', color: 'red', type: 'ability', expansion: 'base', prerequisites: [], summary: 'Add 1 die.', hasAction: false },
 ]
 const state = () => createInitialState(faction, { turnOrder: 1, speaker: false })
 const planetCatalog = [

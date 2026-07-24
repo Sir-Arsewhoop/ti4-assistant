@@ -8,7 +8,7 @@ const factions: Faction[] = [
   { id: 'sol', name: 'Federation of Sol', expansion: 'base', combatModifier: 0, abilitySummaries: ['Orbital Drop.'], starting: { tokens: { tactic: 3, fleet: 3, strategy: 2 }, techIds: [], planets: [], startingUnits: ['1 Space Dock'], commodities: 4, tradeGoods: 0 } },
 ]
 const technologies: Technology[] = [
-  { id: 'plasma-scoring', name: 'Plasma Scoring', color: 'red', prerequisites: [], summary: 'Add 1 die.', hasAction: false },
+  { id: 'plasma-scoring', name: 'Plasma Scoring', color: 'red', type: 'ability', expansion: 'base', prerequisites: [], summary: 'Add 1 die.', hasAction: false },
 ]
 const strategyCards: StrategyCard[] = [{ initiative: 7, name: 'Technology', primary: 'Research.', secondary: 'Pay to research.' }]
 const objectives: Objective[] = [{ id: 'o1', name: 'Diversify Research', points: 1, phase: 'status', summary: 'Own techs.' }]

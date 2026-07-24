@@ -28,6 +28,8 @@ export const technologySchema = z.object({
   id: z.string(),
   name: z.string(),
   color: z.enum(['blue', 'green', 'yellow', 'red', 'none']),
+  type: z.enum(['ability', 'unit-upgrade']),
+  expansion: z.enum(['base', 'pok']),
   prerequisites: z.array(z.enum(['blue', 'green', 'yellow', 'red'])),
   summary: z.string(),
   hasAction: z.boolean().default(false),

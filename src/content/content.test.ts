@@ -72,4 +72,38 @@ describe('content registry', () => {
     const homeIds = new Set(content.factions.flatMap((f) => f.starting.planets.map((pl) => pl.id)))
     for (const id of ids) expect(homeIds.has(id)).toBe(false)
   })
+
+  it('exposes the full 33-tech generic catalog (25 base + 8 PoK, 24 abilities + 9 unit upgrades)', () => {
+    expect(content.technologies).toHaveLength(33)
+    expect(content.technologies.filter((t) => t.expansion === 'base')).toHaveLength(25)
+    expect(content.technologies.filter((t) => t.expansion === 'pok')).toHaveLength(8)
+    expect(content.technologies.filter((t) => t.type === 'ability')).toHaveLength(24)
+    expect(content.technologies.filter((t) => t.type === 'unit-upgrade')).toHaveLength(9)
+  })
+
+  it('keeps unit-upgrade and colorless in lockstep, and abilities colored', () => {
+    for (const t of content.technologies) {
+      if (t.type === 'unit-upgrade') expect(t.color).toBe('none')
+      else expect(t.color).not.toBe('none')
+    }
+  })
+
+  it('has unique tech ids', () => {
+    const ids = content.technologies.map((t) => t.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('carries the corrected/spot-checked prerequisites', () => {
+    const byId = new Map(content.technologies.map((t) => [t.id, t]))
+    expect(byId.get('self-assembly-routines')!.prerequisites).toEqual(['red'])
+    expect(byId.get('scanlink-drone-network')!.prerequisites).toEqual([])
+    expect(byId.get('fighter-ii')!.prerequisites).toEqual(['green', 'blue'])
+    expect(byId.get('war-sun')!.prerequisites).toEqual(['red', 'red', 'red', 'yellow'])
+    expect(byId.get('dreadnought-ii')!.prerequisites).toEqual(['blue', 'blue', 'yellow'])
+  })
+
+  it('flags component actions only on sling-relay and x-89-bacterial-weapon', () => {
+    const withAction = content.technologies.filter((t) => t.hasAction).map((t) => t.id).sort()
+    expect(withAction).toEqual(['sling-relay', 'x-89-bacterial-weapon'])
+  })
 })
