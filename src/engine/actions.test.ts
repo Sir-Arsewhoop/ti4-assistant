@@ -69,4 +69,9 @@ describe('getAvailableActions', () => {
     expect(comp[0].sourceId).toBe('a')
     expect(comp[1].sourceId).toBe('b')
   })
+
+  it('offers research in the action phase, but not once passed', () => {
+    expect(getAvailableActions(actionPhase()).map((a) => a.type)).toContain('research')
+    expect(getAvailableActions(actionPhase({ passed: true })).map((a) => a.type)).not.toContain('research')
+  })
 })

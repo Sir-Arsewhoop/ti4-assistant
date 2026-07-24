@@ -25,6 +25,13 @@ export function getAvailableActions(
     })
   }
 
+  actions.push({
+    type: 'research',
+    label: 'Research technology',
+    explanation:
+      'Add a technology to your play area. Prerequisites you meet now are highlighted, but you can pick any — the app never blocks you. Remember to pay its cost (exhaust planets for resources; the Technology card\'s second research costs 6).',
+  })
+
   for (const src of opts.componentActionSources ?? []) {
     actions.push({
       type: 'componentAction',

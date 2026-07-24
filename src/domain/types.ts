@@ -73,7 +73,7 @@ export type GameAction =
   | { type: 'editState'; patch: Partial<GameState> }
 
 export type AvailableAction = {
-  type: 'strategicAction' | 'tacticalAction' | 'componentAction' | 'pass'
+  type: 'strategicAction' | 'tacticalAction' | 'componentAction' | 'research' | 'pass'
   label: string
   explanation: string
   sourceId?: string
