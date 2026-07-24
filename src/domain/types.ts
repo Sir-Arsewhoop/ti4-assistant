@@ -69,6 +69,7 @@ export type GameAction =
   | { type: 'scorePublicObjective'; objectiveId: string; points: number }
   | { type: 'gainPlanet'; planet: Planet }
   | { type: 'removePlanet'; planetId: string }
+  | { type: 'researchTechnology'; techId: string; name: string }
   | { type: 'editState'; patch: Partial<GameState> }
 
 export type AvailableAction = {

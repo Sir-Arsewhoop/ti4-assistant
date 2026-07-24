@@ -79,6 +79,11 @@ export function applyAction(state: GameState, action: GameAction): GameState {
       return { ...state, planets: state.planets.filter((p) => p.id !== action.planetId), log: log(state, `Removed ${target.name}`) }
     }
 
+    case 'researchTechnology': {
+      if (state.technologyIds.includes(action.techId)) return state
+      return { ...state, technologyIds: [...state.technologyIds, action.techId], log: log(state, `Researched ${action.name}`) }
+    }
+
     case 'editState':
       return { ...state, ...action.patch }
 

@@ -101,4 +101,12 @@ describe('applyAction', () => {
     const noop = applyAction(base(), { type: 'removePlanet', planetId: 'nope' })
     expect(noop.planets).toEqual(base().planets)
   })
+
+  it('researchTechnology adds the tech, logs, and is idempotent', () => {
+    const s1 = applyAction(base(), { type: 'researchTechnology', techId: 'gravity-drive', name: 'Gravity Drive' })
+    expect(s1.technologyIds).toContain('gravity-drive')
+    expect(s1.log.at(-1)?.summary).toBe('Researched Gravity Drive')
+    const s2 = applyAction(s1, { type: 'researchTechnology', techId: 'gravity-drive', name: 'Gravity Drive' })
+    expect(s2).toBe(s1) // no-op returns same reference
+  })
 })
