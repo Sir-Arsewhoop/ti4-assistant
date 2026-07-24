@@ -10,7 +10,7 @@ const faction: Faction = {
 }
 const baseProps = () => ({
   open: true, onClose: vi.fn(), state: createInitialState(faction, { turnOrder: 1, speaker: false }),
-  factions: [faction], technologies: [], strategyCards: [], objectives: [],
+  factions: [faction], technologies: [], strategyCards: [], objectives: [], planets: [],
   themeLabel: 'system', onToggleTheme: vi.fn(), onAction: vi.fn(), onNewGame: vi.fn(), onExport: vi.fn(), onImport: vi.fn(),
 })
 

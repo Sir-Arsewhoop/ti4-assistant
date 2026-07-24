@@ -13,6 +13,9 @@ const technologies: Technology[] = [
   { id: 'plasma-scoring', name: 'Plasma Scoring', color: 'red', prerequisites: [], summary: 'Add 1 die.', hasAction: false },
 ]
 const state = () => createInitialState(faction, { turnOrder: 1, speaker: false })
+const planetCatalog = [
+  { id: 'meer', name: 'Meer', resources: 0, influence: 4, trait: 'hazardous' as const, legendary: false, expansion: 'base' as const },
+]
 
 describe('BoardEditor', () => {
   it('increments victory points via editState', async () => {
@@ -42,5 +45,19 @@ describe('BoardEditor', () => {
     render(BoardEditor, { props: { state: state(), technologies, onAction } })
     await fireEvent.click(screen.getByRole('button', { name: /decrease trade goods/ }))
     expect(onAction).toHaveBeenCalledWith({ type: 'editState', patch: { tradeGoods: 0 } })
+  })
+
+  it('gains a catalog planet via the picker', async () => {
+    const onAction = vi.fn()
+    render(BoardEditor, { props: { state: state(), technologies, planetCatalog, onAction } })
+    await fireEvent.click(screen.getByRole('button', { name: /add Meer/i }))
+    expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'gainPlanet' }))
+  })
+
+  it('removes an owned planet', async () => {
+    const onAction = vi.fn()
+    render(BoardEditor, { props: { state: state(), technologies, planetCatalog, onAction } })
+    await fireEvent.click(screen.getByRole('button', { name: /remove Jord/i }))
+    expect(onAction).toHaveBeenCalledWith({ type: 'removePlanet', planetId: 'jord' })
   })
 })

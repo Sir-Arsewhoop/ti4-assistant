@@ -167,6 +167,7 @@
     technologies={content.technologies}
     strategyCards={content.strategyCards}
     objectives={content.objectives}
+    planets={content.planets}
     themeLabel={prefs.theme}
     onToggleTheme={cycleTheme}
     onAction={(a) => store?.dispatch(a)}
