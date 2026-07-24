@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Faction, Technology, StrategyCard, Objective } from '../../content/schema'
+  import type { Faction, Technology, StrategyCard, Objective, PlanetCatalogEntry } from '../../content/schema'
   import ExpandableItem from './ExpandableItem.svelte'
 
-  interface Props { factions: Faction[]; technologies: Technology[]; strategyCards: StrategyCard[]; objectives: Objective[] }
-  let { factions, technologies, strategyCards, objectives }: Props = $props()
+  interface Props { factions: Faction[]; technologies: Technology[]; strategyCards: StrategyCard[]; objectives: Objective[]; planets: PlanetCatalogEntry[] }
+  let { factions, technologies, strategyCards, objectives, planets }: Props = $props()
 
-  type Kind = 'faction' | 'tech' | 'strategy' | 'objective'
+  type Kind = 'faction' | 'tech' | 'strategy' | 'objective' | 'planet'
   type Entry = { id: string; title: string; summary: string; detail: string }
 
   let kind = $state<Kind>('faction')
@@ -15,16 +15,30 @@
     kind === 'faction'
       ? factions.map((f) => {
           const techName = (id: string) => technologies.find((t) => t.id === id)?.name ?? id
-          const planets = f.starting.planets.map((pl) => `${pl.name} (${pl.resources}/${pl.influence})`).join(', ') || 'none'
+          const homePlanets = f.starting.planets.map((pl) => `${pl.name} (${pl.resources}/${pl.influence})`).join(', ') || 'none'
           const techs = f.starting.techIds.map(techName).join(', ') || 'none'
-          const setup = `Home planets: ${planets}\nStarting tech: ${techs}\nStarting units: ${f.starting.startingUnits.join(', ')}`
+          const setup = `Home planets: ${homePlanets}\nStarting tech: ${techs}\nStarting units: ${f.starting.startingUnits.join(', ')}`
           return { id: f.id, title: f.name, summary: f.abilitySummaries[0] ?? '', detail: `${f.abilitySummaries.join('\n')}\n\n${setup}` }
         })
       : kind === 'tech'
         ? technologies.map((t) => ({ id: t.id, title: t.name, summary: t.summary, detail: `${t.color} · prereqs: ${t.prerequisites.join(', ') || 'none'}\n${t.summary}` }))
         : kind === 'strategy'
           ? strategyCards.map((c) => ({ id: String(c.initiative), title: `${c.initiative}. ${c.name}`, summary: c.primary, detail: `Primary: ${c.primary}\nSecondary: ${c.secondary}` }))
-          : objectives.map((o) => ({ id: o.id, title: o.name, summary: o.summary, detail: `${o.points} VP · ${o.phase}\n${o.summary}` })),
+          : kind === 'objective'
+            ? objectives.map((o) => ({ id: o.id, title: o.name, summary: o.summary, detail: `${o.points} VP · ${o.phase}\n${o.summary}` }))
+            : planets.map((pl) => ({
+                id: pl.id,
+                title: pl.name,
+                summary: `${pl.resources}/${pl.influence}${pl.trait ? ` · ${pl.trait}` : ''}`,
+                detail: [
+                  `${pl.resources} resources / ${pl.influence} influence`,
+                  pl.trait ? `Trait: ${pl.trait}` : 'No trait',
+                  pl.techSpecialty ? `Tech specialty: ${pl.techSpecialty}` : null,
+                  pl.legendary && pl.legendaryAbility ? `Legendary: ${pl.legendaryAbility}` : null,
+                ]
+                  .filter(Boolean)
+                  .join('\n'),
+              })),
   )
   const entries = $derived(all.filter((e) => e.title.toLowerCase().includes(q.toLowerCase())))
 
@@ -33,6 +47,7 @@
     { k: 'tech', label: 'Tech' },
     { k: 'strategy', label: 'Strategy' },
     { k: 'objective', label: 'Objectives' },
+    { k: 'planet', label: 'Planets' },
   ]
 </script>
 

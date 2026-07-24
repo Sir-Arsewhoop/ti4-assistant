@@ -48,7 +48,7 @@
       </div>
 
       {#if section === 'reference'}
-        <ReferenceBrowser {factions} {technologies} {strategyCards} {objectives} />
+        <ReferenceBrowser {factions} {technologies} {strategyCards} {objectives} {planets} />
       {:else if section === 'board'}
         <BoardEditor state={gameState} {technologies} planetCatalog={planets} {onAction} />
       {:else}
