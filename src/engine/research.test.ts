@@ -45,6 +45,12 @@ describe('getResearchableTechs', () => {
     expect(ready(state({ technologyIds: ['neural-motivator'] })).has('fighter-ii')).toBe(false)
   })
 
+  it('does not count icons of the wrong color (per-color, not total)', () => {
+    // fighter-ii needs green + blue. Two GREEN techs give total=2 but zero blue.
+    const r = ready(state({ technologyIds: ['neural-motivator', 'dacxive-animators'] }))
+    expect(r.has('fighter-ii')).toBe(false)
+  })
+
   it('owning a unit upgrade supplies no icons (colorless)', () => {
     expect(ready(state({ technologyIds: ['carrier-ii'] })).has('gravity-drive')).toBe(false)
   })
