@@ -46,21 +46,27 @@ the player's own state** and tells them their legal options + reminders each pha
 - The M3dnar community JSON dataset has **verified value errors** — do NOT trust it for
   numbers; cross-check against the two sources above.
 
-## State (as of 2026-07-24)
+## State (as of 2026-07-25)
 
 Done + merged to `main`: v1 (setup → strategy → action → status → agenda round loop,
 offline PWA, GitHub Pages deploy) + all **24 factions** (base + PoK) + a **63-planet
-catalog** (gain/remove planets in the board editor, Planets reference tab). 96 tests,
-check 0/0, build OK.
+catalog** (gain/remove planets in the board editor, Planets reference tab) + the **full
+generic tech tree** (33 base+PoK techs with `type`/`expansion`; pure `getResearchableTechs`;
+`researchTechnology` action + `ResearchPicker`; Technology-card / researchable-count
+reminders; grouped tech reference). 116 tests, check 0/0, build OK.
 
 Full history lives in `docs/superpowers/specs/` and `docs/superpowers/plans/` (esp. the
-`2026-07-24-*` faction-breadth and planet-catalog files) and git log.
+`2026-07-24-*` faction-breadth, planet-catalog, and tech-tree files) and git log.
 
 ## Next cycles (each: brainstorm → spec → plan → build)
 
-1. Full tech tree
-2. Objectives (full public I/II + secret decks)
-3. Leaders / mechs / faction-tech (faction depth — the same wiki `{{Main Infobox 1}}`
+1. Objectives (full public I/II + secret decks)
+2. Leaders / mechs / faction-tech (faction depth — the same wiki `{{Main Infobox 1}}`
    exposes all of it)
-4. Trait-aware reminders (planets now carry traits)
-5. Action + agenda card references
+3. Trait-aware reminders (planets now carry traits)
+4. Action + agenda card references
+
+Deferred polish (from tech-tree final review, non-blocking): extract the duplicated
+`TECH_GROUPS` array shared by `ResearchPicker.svelte` + `ReferenceBrowser.svelte` into one
+module; consider a Zod `.refine()` enforcing the `unit-upgrade ⟺ color:'none'` invariant;
+a copyright pass over the pre-existing (non-tech-tree) content summaries.
