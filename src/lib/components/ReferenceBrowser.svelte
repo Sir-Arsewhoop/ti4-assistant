@@ -21,7 +21,7 @@
           return { id: f.id, title: f.name, summary: f.abilitySummaries[0] ?? '', detail: `${f.abilitySummaries.join('\n')}\n\n${setup}` }
         })
       : kind === 'tech'
-        ? technologies.map((t) => ({ id: t.id, title: t.name, summary: t.summary, detail: `${t.color} · prereqs: ${t.prerequisites.join(', ') || 'none'}\n${t.summary}` }))
+        ? []
         : kind === 'strategy'
           ? strategyCards.map((c) => ({ id: String(c.initiative), title: `${c.initiative}. ${c.name}`, summary: c.primary, detail: `Primary: ${c.primary}\nSecondary: ${c.secondary}` }))
           : kind === 'objective'
@@ -42,6 +42,29 @@
   )
   const entries = $derived(all.filter((e) => e.title.toLowerCase().includes(q.toLowerCase())))
 
+  const TECH_GROUPS: { key: string; label: string; match: (t: Technology) => boolean }[] = [
+    { key: 'blue', label: 'Propulsion (blue)', match: (t) => t.type === 'ability' && t.color === 'blue' },
+    { key: 'green', label: 'Biotic (green)', match: (t) => t.type === 'ability' && t.color === 'green' },
+    { key: 'yellow', label: 'Cybernetic (yellow)', match: (t) => t.type === 'ability' && t.color === 'yellow' },
+    { key: 'red', label: 'Warfare (red)', match: (t) => t.type === 'ability' && t.color === 'red' },
+    { key: 'unit', label: 'Unit Upgrades', match: (t) => t.type === 'unit-upgrade' },
+  ]
+  const techGroups = $derived(
+    TECH_GROUPS.map((g) => ({
+      key: g.key,
+      label: g.label,
+      entries: technologies
+        .filter((t) => g.match(t) && t.name.toLowerCase().includes(q.toLowerCase()))
+        .sort((a, b) => a.prerequisites.length - b.prerequisites.length)
+        .map((t) => ({
+          id: t.id,
+          title: t.name,
+          summary: t.summary,
+          detail: `${t.type === 'unit-upgrade' ? 'Unit upgrade' : t.color} · ${t.expansion.toUpperCase()} · prereqs: ${t.prerequisites.join(', ') || 'none'}\n${t.summary}`,
+        })),
+    })).filter((g) => g.entries.length > 0),
+  )
+
   const tabs: { k: Kind; label: string }[] = [
     { k: 'faction', label: 'Factions' },
     { k: 'tech', label: 'Tech' },
@@ -57,7 +80,17 @@
   {/each}
 </div>
 <input placeholder="Search" bind:value={q} style="width:100%;padding:8px;margin-bottom:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);" />
-{#each entries as e (kind + e.id)}
-  <ExpandableItem title={e.title} summary={e.summary} detail={e.detail} />
-{/each}
-{#if entries.length === 0}<p style="color:var(--text-muted);font-size:14px;">No matches.</p>{/if}
+{#if kind === 'tech'}
+  {#each techGroups as g (g.key)}
+    <h4 style="font-weight:500;margin-top:12px;">{g.label}</h4>
+    {#each g.entries as e (e.id)}
+      <ExpandableItem title={e.title} summary={e.summary} detail={e.detail} />
+    {/each}
+  {/each}
+  {#if techGroups.length === 0}<p style="color:var(--text-muted);font-size:14px;">No matches.</p>{/if}
+{:else}
+  {#each entries as e (kind + e.id)}
+    <ExpandableItem title={e.title} summary={e.summary} detail={e.detail} />
+  {/each}
+  {#if entries.length === 0}<p style="color:var(--text-muted);font-size:14px;">No matches.</p>{/if}
+{/if}

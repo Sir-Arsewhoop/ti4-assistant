@@ -9,6 +9,7 @@ const factions: Faction[] = [
 ]
 const technologies: Technology[] = [
   { id: 'plasma-scoring', name: 'Plasma Scoring', color: 'red', type: 'ability', expansion: 'base', prerequisites: [], summary: 'Add 1 die.', hasAction: false },
+  { id: 'carrier-ii', name: 'Carrier II', color: 'none', type: 'unit-upgrade', expansion: 'base', prerequisites: ['blue', 'blue'], summary: 'Upgraded Carrier.', hasAction: false },
 ]
 const strategyCards: StrategyCard[] = [{ initiative: 7, name: 'Technology', primary: 'Research.', secondary: 'Pay to research.' }]
 const objectives: Objective[] = [{ id: 'o1', name: 'Diversify Research', points: 1, phase: 'status', summary: 'Own techs.' }]
@@ -45,5 +46,14 @@ describe('ReferenceBrowser', () => {
     await fireEvent.click(screen.getByRole('button', { name: /Planets/ }))
     expect(screen.getByText('Meer')).toBeTruthy()
     expect(screen.getByText('Primor')).toBeTruthy()
+  })
+
+  it('groups the technology tab with a Unit Upgrades header', async () => {
+    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, objectives, planets } })
+    await fireEvent.click(screen.getByRole('button', { name: /Tech/ }))
+    expect(screen.getByText('Unit Upgrades')).toBeTruthy()
+    expect(screen.getByText('Warfare (red)')).toBeTruthy()
+    expect(screen.getByText('Plasma Scoring')).toBeTruthy()
+    expect(screen.getByText('Carrier II')).toBeTruthy()
   })
 })
