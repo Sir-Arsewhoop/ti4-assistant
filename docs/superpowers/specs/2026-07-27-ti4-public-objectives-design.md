@@ -137,7 +137,7 @@ Status-phase reminders:
 - how many revealed public objectives remain unscored,
 - whether this round's public scoring window has already been used,
 - victory-point progress toward 10,
-- a note once any Stage II objective is revealed (they are worth 2 points).
+- a note once any Stage II objective is scorable (they are worth 2 points).
 
 ## 7. UI
 

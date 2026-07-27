@@ -33,9 +33,11 @@ describe('getReminders', () => {
     expect(getReminders(s).map((r) => r.id)).toContain('exhausted-planets')
   })
 
-  it('is quiet outside the action phase', () => {
+  it('is quiet in phases with no reminders yet (setup, strategy, agenda)', () => {
     const s = createInitialState(faction, { turnOrder: 1, speaker: false }) // setup
     expect(getReminders(s)).toEqual([])
+    expect(getReminders({ ...s, phase: 'strategy' })).toEqual([])
+    expect(getReminders({ ...s, phase: 'agenda' })).toEqual([])
   })
 
   it('includes a fleet-pool info reminder in the action phase', () => {

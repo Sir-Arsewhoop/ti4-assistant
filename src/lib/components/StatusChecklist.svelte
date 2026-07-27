@@ -30,6 +30,9 @@
   function scorePublic(o: Objective) {
     onAction({ type: 'scorePublicObjective', objectiveId: o.id, points: o.points })
   }
+  function unreveal(o: Objective) {
+    onAction({ type: 'editState', patch: { revealedPublicObjectiveIds: gameState.revealedPublicObjectiveIds.filter((id) => id !== o.id) } })
+  }
   function scoreSecret() {
     onAction({ type: 'editState', patch: {
       secretObjectives: [...gameState.secretObjectives, { id: `secret-${gameState.secretObjectives.length + 1}`, scored: true }],
@@ -51,10 +54,13 @@
   <h4 style="font-weight:500;margin-top:10px;">Stage {g.stage}</h4>
   {#each g.objectives as o (o.id)}
     {@const scored = gameState.scoredPublicObjectiveIds.includes(o.id)}
-    <button
-      onclick={() => scorePublic(o)}
-      style="display:block;width:100%;text-align:left;margin:4px 0;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:{scored ? 'var(--surface-2)' : 'var(--surface)'};color:{scored ? 'var(--text-muted)' : 'var(--text)'};cursor:pointer;"
-    >{scored ? '✓ ' : ''}Score: {o.name} (+{o.points})</button>
+    <div style="display:flex;align-items:center;gap:6px;margin:4px 0;">
+      <button
+        onclick={() => scorePublic(o)}
+        style="flex:1;text-align:left;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:{scored ? 'var(--surface-2)' : 'var(--surface)'};color:{scored ? 'var(--text-muted)' : 'var(--text)'};cursor:pointer;"
+      >{scored ? '✓ ' : ''}Score: {o.name} (+{o.points})</button>
+      <button onclick={() => unreveal(o)} aria-label={`unreveal ${o.name}`} style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">✕</button>
+    </div>
   {/each}
 {/each}
 {#if stageGroups.length === 0}<p style="color:var(--text-muted);font-size:14px;">No public objectives revealed yet — reveal one below.</p>{/if}

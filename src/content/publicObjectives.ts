@@ -3,7 +3,7 @@ import type { Objective } from './schema'
 export const publicObjectives: Objective[] = [
   // ── Stage I · base ──
   { id: 'corner-the-market', name: 'Corner the Market', points: 1, stage: 'I', expansion: 'base', phase: 'status', summary: 'Hold 4 planets that all share one trait.' },
-  { id: 'develop-weaponry', name: 'Develop Weaponry', points: 1, stage: 'I', expansion: 'base', phase: 'status', summary: 'Have researched any 2 unit upgrades.' },
+  { id: 'develop-weaponry', name: 'Develop Weaponry', points: 1, stage: 'I', expansion: 'base', phase: 'status', summary: 'Hold 2 unit-upgrade techs.' },
   { id: 'diversify-research', name: 'Diversify Research', points: 1, stage: 'I', expansion: 'base', phase: 'status', summary: 'Hold a pair of techs in each of 2 different colors.' },
   { id: 'erect-a-monument', name: 'Erect a Monument', points: 1, stage: 'I', expansion: 'base', phase: 'status', summary: 'Pay out 8 resources.' },
   { id: 'expand-borders', name: 'Expand Borders', points: 1, stage: 'I', expansion: 'base', phase: 'status', summary: 'Hold 6 planets located outside home systems.' },
@@ -17,9 +17,9 @@ export const publicObjectives: Objective[] = [
   { id: 'amass-wealth', name: 'Amass Wealth', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Pay 3 each of influence, resources, and trade goods.' },
   { id: 'build-defenses', name: 'Build Defenses', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Own at least 4 structures.' },
   { id: 'discover-lost-outposts', name: 'Discover Lost Outposts', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Hold 2 planets carrying attachment cards.' },
-  { id: 'engineer-a-marvel', name: 'Engineer a Marvel', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Get your flagship, or a war sun, onto the board.' },
+  { id: 'engineer-a-marvel', name: 'Engineer a Marvel', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Have your flagship or a war sun in play.' },
   { id: 'explore-deep-space', name: 'Explore Deep Space', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Station units across 3 planetless systems.' },
-  { id: 'improve-infrastructure', name: 'Improve Infrastructure', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Build on 3 planets away from your home system.' },
+  { id: 'improve-infrastructure', name: 'Improve Infrastructure', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Hold 3 planets away from home that carry your structures.' },
   { id: 'make-history', name: 'Make History', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Station units in 2 systems holding an anomaly, a legendary planet, or Mecatol Rex.' },
   { id: 'populate-the-outer-rim', name: 'Populate the Outer Rim', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Station units in 3 board-edge systems that are not your home.' },
   { id: 'push-boundaries', name: 'Push Boundaries', points: 1, stage: 'I', expansion: 'pok', phase: 'status', summary: 'Out-planet 2 of your neighbors — hold more than each of them.' },
@@ -33,7 +33,7 @@ export const publicObjectives: Objective[] = [
   { id: 'galvanize-the-people', name: 'Galvanize the People', points: 2, stage: 'II', expansion: 'base', phase: 'status', summary: 'Use up 6 command tokens drawn from tactic, strategy, or both.' },
   { id: 'manipulate-galactic-law', name: 'Manipulate Galactic Law', points: 2, stage: 'II', expansion: 'base', phase: 'status', summary: 'Pay out 16 influence.' },
   { id: 'master-the-sciences', name: 'Master the Sciences', points: 2, stage: 'II', expansion: 'base', phase: 'status', summary: 'Hold a pair of techs in each of all 4 colors.' },
-  { id: 'revolutionize-warfare', name: 'Revolutionize Warfare', points: 2, stage: 'II', expansion: 'base', phase: 'status', summary: 'Have researched any 3 unit upgrades.' },
+  { id: 'revolutionize-warfare', name: 'Revolutionize Warfare', points: 2, stage: 'II', expansion: 'base', phase: 'status', summary: 'Hold 3 unit-upgrade techs.' },
   { id: 'subdue-the-galaxy', name: 'Subdue the Galaxy', points: 2, stage: 'II', expansion: 'base', phase: 'status', summary: 'Hold 11 planets located outside home systems.' },
   { id: 'unify-the-colonies', name: 'Unify the Colonies', points: 2, stage: 'II', expansion: 'base', phase: 'status', summary: 'Hold 6 planets that all share one trait.' },
 
@@ -45,7 +45,7 @@ export const publicObjectives: Objective[] = [
   { id: 'control-the-borderlands', name: 'Control the Borderlands', points: 2, stage: 'II', expansion: 'pok', phase: 'status', summary: 'Station units in 5 board-edge systems that are not your home.' },
   { id: 'hold-vast-reserves', name: 'Hold Vast Reserves', points: 2, stage: 'II', expansion: 'pok', phase: 'status', summary: 'Pay 6 each of influence, resources, and trade goods.' },
   { id: 'patrol-vast-territories', name: 'Patrol Vast Territories', points: 2, stage: 'II', expansion: 'pok', phase: 'status', summary: 'Station units across 5 planetless systems.' },
-  { id: 'protect-the-border', name: 'Protect the Border', points: 2, stage: 'II', expansion: 'pok', phase: 'status', summary: 'Build on 5 planets away from your home system.' },
+  { id: 'protect-the-border', name: 'Protect the Border', points: 2, stage: 'II', expansion: 'pok', phase: 'status', summary: 'Hold 5 planets away from home that carry your structures.' },
   { id: 'reclaim-ancient-monuments', name: 'Reclaim Ancient Monuments', points: 2, stage: 'II', expansion: 'pok', phase: 'status', summary: 'Hold 3 planets carrying attachment cards.' },
   { id: 'rule-distant-lands', name: 'Rule Distant Lands', points: 2, stage: 'II', expansion: 'pok', phase: 'status', summary: 'Hold 2 planets, each in or beside a different rival\'s home system.' },
 ]

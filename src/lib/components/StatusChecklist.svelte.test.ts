@@ -62,4 +62,11 @@ describe('StatusChecklist', () => {
     expect(screen.getByText('Stage I')).toBeTruthy()
     expect(screen.getByText('Stage II')).toBeTruthy()
   })
+
+  it('un-reveals a revealed objective', async () => {
+    const onAction = vi.fn()
+    render(StatusChecklist, { props: { state: state(), publicObjectives, onAction } })
+    await fireEvent.click(screen.getByRole('button', { name: /unreveal Diversify Research/i }))
+    expect(onAction).toHaveBeenCalledWith({ type: 'editState', patch: { revealedPublicObjectiveIds: [] } })
+  })
 })
