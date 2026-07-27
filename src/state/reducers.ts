@@ -46,7 +46,17 @@ export function applyAction(state: GameState, action: GameAction): GameState {
         ...state,
         scoredPublicObjectiveIds: [...state.scoredPublicObjectiveIds, action.objectiveId],
         victoryPoints: state.victoryPoints + action.points,
+        scoredPublicThisRound: true,
         log: log(state, `Scored objective ${action.objectiveId} (+${action.points} VP)`),
+      }
+    }
+
+    case 'revealPublicObjective': {
+      if (state.revealedPublicObjectiveIds.includes(action.objectiveId)) return state
+      return {
+        ...state,
+        revealedPublicObjectiveIds: [...state.revealedPublicObjectiveIds, action.objectiveId],
+        log: log(state, `Revealed ${action.name}`),
       }
     }
 
@@ -64,6 +74,7 @@ export function applyAction(state: GameState, action: GameAction): GameState {
         round: state.round + (enteringNewRound ? 1 : 0),
         strategyPrimaryUsed: next === 'strategy' ? false : state.strategyPrimaryUsed,
         passed: next === 'strategy' ? false : state.passed,
+        scoredPublicThisRound: enteringNewRound ? false : state.scoredPublicThisRound,
         log: log(state, `Advanced to ${next} phase`),
       }
     }

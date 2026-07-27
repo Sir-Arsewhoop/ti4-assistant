@@ -69,6 +69,7 @@ export type GameAction =
   | { type: 'gainTradeGoods'; amount: number }
   | { type: 'exhaustPlanet'; planetId: string }
   | { type: 'scorePublicObjective'; objectiveId: string; points: number }
+  | { type: 'revealPublicObjective'; objectiveId: string; name: string }
   | { type: 'gainPlanet'; planet: Planet }
   | { type: 'removePlanet'; planetId: string }
   | { type: 'researchTechnology'; techId: string; name: string }

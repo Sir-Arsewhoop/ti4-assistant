@@ -109,4 +109,23 @@ describe('applyAction', () => {
     const s2 = applyAction(s1, { type: 'researchTechnology', techId: 'gravity-drive', name: 'Gravity Drive' })
     expect(s2).toBe(s1) // no-op returns same reference
   })
+
+  it('revealPublicObjective records the id, logs, and is idempotent', () => {
+    const s1 = applyAction(base(), { type: 'revealPublicObjective', objectiveId: 'corner-the-market', name: 'Corner the Market' })
+    expect(s1.revealedPublicObjectiveIds).toContain('corner-the-market')
+    expect(s1.log.at(-1)?.summary).toBe('Revealed Corner the Market')
+    const s2 = applyAction(s1, { type: 'revealPublicObjective', objectiveId: 'corner-the-market', name: 'Corner the Market' })
+    expect(s2).toBe(s1)
+  })
+
+  it('scorePublicObjective marks this round\'s public window used', () => {
+    const s = applyAction(base(), { type: 'scorePublicObjective', objectiveId: 'obj-a', points: 1 })
+    expect(s.scoredPublicThisRound).toBe(true)
+  })
+
+  it('advancePhase clears the public scoring window on round rollover', () => {
+    const s = applyAction(base({ phase: 'status', scoredPublicThisRound: true, custodiansTaken: false }), { type: 'advancePhase' })
+    expect(s.phase).toBe('strategy')
+    expect(s.scoredPublicThisRound).toBe(false)
+  })
 })
