@@ -2,7 +2,7 @@
   import { content, getFaction } from './content/index'
   import { createInitialState } from './domain/initialState'
   import { createGameStore } from './state/store.svelte'
-  import { getAvailableActions, getReminders, getResearchableTechs } from './engine/index'
+  import { getAvailableActions, getReminders, getResearchableTechs, getScorablePublicObjectives } from './engine/index'
   import { saveGame, loadGame, exportGame, importGame } from './persistence/storage'
   import { onMount, untrack } from 'svelte'
   import { loadPrefs, savePrefs } from './lib/prefs'
@@ -50,7 +50,13 @@
   const researchResults = $derived(gameState ? getResearchableTechs(gameState, content.technologies) : [])
   const researchableIds = $derived(new Set(researchResults.filter((r) => r.researchable).map((r) => r.techId)))
   const actions = $derived(gameState ? getAvailableActions(gameState, { componentActionSources }) : [])
-  const reminders = $derived(gameState ? getReminders(gameState, { researchableCount: researchableIds.size }) : [])
+  const scorablePublics = $derived(gameState ? getScorablePublicObjectives(gameState, content.publicObjectives) : [])
+  const stageTwoScorable = $derived(scorablePublics.some((o) => o.stage === 'II'))
+  const reminders = $derived(
+    gameState
+      ? getReminders(gameState, { researchableCount: researchableIds.size, scorablePublicCount: scorablePublics.length, stageTwoScorable })
+      : [],
+  )
 
   $effect(() => {
     // $state.snapshot: store.state is a deeply-reactive Proxy, which structured-clone
