@@ -25,7 +25,7 @@
         : kind === 'strategy'
           ? strategyCards.map((c) => ({ id: String(c.initiative), title: `${c.initiative}. ${c.name}`, summary: c.primary, detail: `Primary: ${c.primary}\nSecondary: ${c.secondary}` }))
           : kind === 'objective'
-            ? publicObjectives.map((o) => ({ id: o.id, title: o.name, summary: o.summary, detail: `${o.points} VP · ${o.phase}\n${o.summary}` }))
+            ? []
             : planets.map((pl) => ({
                 id: pl.id,
                 title: pl.name,
@@ -65,6 +65,23 @@
     })).filter((g) => g.entries.length > 0),
   )
 
+  const objectiveGroups = $derived(
+    (['I', 'II'] as const)
+      .map((stage) => ({
+        key: stage,
+        label: `Stage ${stage}`,
+        entries: publicObjectives
+          .filter((o) => o.stage === stage && o.name.toLowerCase().includes(q.toLowerCase()))
+          .map((o) => ({
+            id: o.id,
+            title: o.name,
+            summary: o.summary,
+            detail: `${o.points} VP · Stage ${o.stage} · ${o.expansion.toUpperCase()}\n${o.summary}`,
+          })),
+      }))
+      .filter((g) => g.entries.length > 0),
+  )
+
   const tabs: { k: Kind; label: string }[] = [
     { k: 'faction', label: 'Factions' },
     { k: 'tech', label: 'Tech' },
@@ -80,7 +97,15 @@
   {/each}
 </div>
 <input placeholder="Search" bind:value={q} style="width:100%;padding:8px;margin-bottom:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);" />
-{#if kind === 'tech'}
+{#if kind === 'objective'}
+  {#each objectiveGroups as g (g.key)}
+    <h4 style="font-weight:500;margin-top:12px;">{g.label}</h4>
+    {#each g.entries as e (e.id)}
+      <ExpandableItem title={e.title} summary={e.summary} detail={e.detail} />
+    {/each}
+  {/each}
+  {#if objectiveGroups.length === 0}<p style="color:var(--text-muted);font-size:14px;">No matches.</p>{/if}
+{:else if kind === 'tech'}
   {#each techGroups as g (g.key)}
     <h4 style="font-weight:500;margin-top:12px;">{g.label}</h4>
     {#each g.entries as e (e.id)}
