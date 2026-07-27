@@ -134,7 +134,7 @@ describe('content registry', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('still includes the objectives the old stub carried', () => {
+  it('covers the objectives the old stub carried', () => {
     const ids = new Set(content.publicObjectives.map((o) => o.id))
     for (const id of ['diversify-research', 'develop-weaponry', 'lead-from-the-front']) expect(ids.has(id)).toBe(true)
   })
