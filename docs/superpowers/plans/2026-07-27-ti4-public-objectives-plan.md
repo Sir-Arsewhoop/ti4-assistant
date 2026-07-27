@@ -248,7 +248,7 @@ In `src/lib/components/ReferenceBrowser.svelte.test.ts`, replace the `objectives
 const publicObjectives: Objective[] = [{ id: 'o1', name: 'Diversify Research', points: 1, stage: 'I', expansion: 'base', phase: 'status', summary: 'Own techs.' }]
 ```
 
-and in all four `render(...)` calls change `objectives,` to `publicObjectives,` inside the props object.
+and in every `render(...)` call in that file (there are 5) change `objectives,` to `publicObjectives,` inside the props object.
 
 In `src/lib/components/MenuSheet.svelte.test.ts`, change `objectives: [],` to `publicObjectives: [],` in the props object.
 
