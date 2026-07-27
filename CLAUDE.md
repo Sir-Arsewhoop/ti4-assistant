@@ -63,7 +63,8 @@ un-revealable), and the stage-grouped Objectives reference tab. 143 tests, check
 build OK.
 
 Full history lives in `docs/superpowers/specs/` and `docs/superpowers/plans/` (esp. the
-`2026-07-24-*` faction-breadth, planet-catalog, and tech-tree files) and git log.
+`2026-07-24-*` faction-breadth, planet-catalog, and tech-tree files, and the
+`2026-07-27-*` public-objectives pair) and git log.
 
 ## Next cycles (each: brainstorm → spec → plan → build)
 
