@@ -43,4 +43,30 @@ describe('persistence', () => {
     expect(() => importGame('{}')).toThrow()
     expect(() => importGame('{"phase":"strategy"}')).toThrow()
   })
+
+  it('fills defaults for fields missing from a legacy save on load', async () => {
+    const legacy = { ...state() } as Record<string, unknown>
+    delete legacy.revealedPublicObjectiveIds
+    delete legacy.scoredPublicThisRound
+    await saveGame('legacy-1', legacy as never)
+    const loaded = await loadGame('legacy-1')
+    expect(loaded?.revealedPublicObjectiveIds).toEqual([])
+    expect(loaded?.scoredPublicThisRound).toBe(false)
+  })
+
+  it('fills defaults for fields missing from a legacy import', () => {
+    const legacy = { ...state() } as Record<string, unknown>
+    delete legacy.revealedPublicObjectiveIds
+    delete legacy.scoredPublicThisRound
+    const imported = importGame(JSON.stringify(legacy))
+    expect(imported.revealedPublicObjectiveIds).toEqual([])
+    expect(imported.scoredPublicThisRound).toBe(false)
+  })
+
+  it('does not clobber values that are present', () => {
+    const s = { ...state(), revealedPublicObjectiveIds: ['corner-the-market'], scoredPublicThisRound: true }
+    const imported = importGame(exportGame(s))
+    expect(imported.revealedPublicObjectiveIds).toEqual(['corner-the-market'])
+    expect(imported.scoredPublicThisRound).toBe(true)
+  })
 })

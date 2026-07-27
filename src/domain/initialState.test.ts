@@ -39,4 +39,10 @@ describe('createInitialState', () => {
     s.planets[0].exhausted = true
     expect(fixture.starting.planets[0].exhausted).toBe(false)
   })
+
+  it('seeds the public-objective tracking fields', () => {
+    const s = createInitialState(fixture, { turnOrder: 1, speaker: false })
+    expect(s.revealedPublicObjectiveIds).toEqual([])
+    expect(s.scoredPublicThisRound).toBe(false)
+  })
 })

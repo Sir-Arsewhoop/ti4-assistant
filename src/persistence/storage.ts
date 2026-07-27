@@ -16,12 +16,23 @@ function db() {
   return dbPromise
 }
 
+// Saves written before a field existed load as `undefined`; fill them so older
+// games keep working instead of crashing on a missing array.
+export function withStateDefaults(raw: Partial<GameState>): GameState {
+  return {
+    ...(raw as GameState),
+    revealedPublicObjectiveIds: raw.revealedPublicObjectiveIds ?? [],
+    scoredPublicThisRound: raw.scoredPublicThisRound ?? false,
+  }
+}
+
 export async function saveGame(id: string, state: GameState): Promise<void> {
   await (await db()).put(STORE, state, id)
 }
 
 export async function loadGame(id: string): Promise<GameState | undefined> {
-  return (await (await db()).get(STORE, id)) as GameState | undefined
+  const raw = (await (await db()).get(STORE, id)) as Partial<GameState> | undefined
+  return raw ? withStateDefaults(raw) : undefined
 }
 
 export async function listGames(): Promise<string[]> {
@@ -33,9 +44,9 @@ export function exportGame(state: GameState): string {
 }
 
 export function importGame(json: string): GameState {
-  const parsed = JSON.parse(json) as GameState
+  const parsed = JSON.parse(json) as Partial<GameState>
   if (typeof parsed?.phase !== 'string' || !parsed.command || !Array.isArray(parsed.planets)) {
     throw new Error('Not a valid TI4 game save')
   }
-  return parsed
+  return withStateDefaults(parsed)
 }

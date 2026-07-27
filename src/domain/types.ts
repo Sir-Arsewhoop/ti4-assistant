@@ -36,6 +36,8 @@ export type GameState = {
   tradeGoods: number
   commodities: number
   scoredPublicObjectiveIds: string[]
+  revealedPublicObjectiveIds: string[]
+  scoredPublicThisRound: boolean
   secretObjectives: SecretObjective[]
   victoryPoints: number
   leaders: LeaderState

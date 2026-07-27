@@ -18,6 +18,8 @@ export function createInitialState(
     tradeGoods: faction.starting.tradeGoods,
     commodities: faction.starting.commodities,
     scoredPublicObjectiveIds: [],
+    revealedPublicObjectiveIds: [],
+    scoredPublicThisRound: false,
     secretObjectives: [],
     victoryPoints: 0,
     leaders: { agentUnlocked: false, commanderUnlocked: false, heroUnlocked: false },
