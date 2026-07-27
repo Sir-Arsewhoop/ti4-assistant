@@ -1,7 +1,8 @@
 import type { GameState, Reminder } from '../domain/types'
 
-export function getReminders(state: GameState, opts: { researchableCount?: number } = {}): Reminder[] {
-  if (state.phase !== 'action') return []
+type Opts = { researchableCount?: number; scorablePublicCount?: number; stageTwoScorable?: boolean }
+
+function actionReminders(state: GameState, opts: Opts): Reminder[] {
   const out: Reminder[] = []
 
   if (state.strategyCardIds.length > 0 && !state.strategyPrimaryUsed) {
@@ -37,4 +38,35 @@ export function getReminders(state: GameState, opts: { researchableCount?: numbe
   }
 
   return out
+}
+
+function statusReminders(state: GameState, opts: Opts): Reminder[] {
+  const out: Reminder[] = []
+
+  const scorable = opts.scorablePublicCount ?? 0
+  if (scorable > 0) {
+    out.push({
+      id: 'scorable-publics',
+      severity: 'info',
+      text: `${scorable} revealed public objective${scorable === 1 ? '' : 's'} you haven't scored yet.`,
+    })
+  }
+
+  if (state.scoredPublicThisRound) {
+    out.push({ id: 'public-window-used', severity: 'info', text: 'You already scored a public objective this round.' })
+  }
+
+  if (opts.stageTwoScorable) {
+    out.push({ id: 'stage-two-available', severity: 'info', text: 'A Stage II objective is available — those are worth 2 victory points.' })
+  }
+
+  out.push({ id: 'vp-progress', severity: 'info', text: `${state.victoryPoints} of 10 victory points.` })
+
+  return out
+}
+
+export function getReminders(state: GameState, opts: Opts = {}): Reminder[] {
+  if (state.phase === 'action') return actionReminders(state, opts)
+  if (state.phase === 'status') return statusReminders(state, opts)
+  return []
 }

@@ -11,6 +11,10 @@ function actionPhase(overrides: Partial<GameState> = {}): GameState {
   const s = createInitialState(faction, { turnOrder: 1, speaker: false })
   return { ...s, phase: 'action', strategyCardIds: [1], ...overrides }
 }
+function statusPhase(overrides: Partial<GameState> = {}): GameState {
+  const s = createInitialState(faction, { turnOrder: 1, speaker: false })
+  return { ...s, phase: 'status', ...overrides }
+}
 
 describe('getReminders', () => {
   it('reminds you to use your strategy primary if unused in the action phase', () => {
@@ -52,5 +56,33 @@ describe('getReminders', () => {
     expect(r.find((x) => x.id === 'researchable')?.text).toContain('3')
     expect(getReminders(actionPhase(), { researchableCount: 0 }).map((x) => x.id)).not.toContain('researchable')
     expect(getReminders(actionPhase()).map((x) => x.id)).not.toContain('researchable')
+  })
+
+  it('counts the public objectives you could still score this status phase', () => {
+    const r = getReminders(statusPhase(), { scorablePublicCount: 2 })
+    expect(r.find((x) => x.id === 'scorable-publics')?.text).toContain('2')
+    expect(getReminders(statusPhase(), { scorablePublicCount: 0 }).map((x) => x.id)).not.toContain('scorable-publics')
+  })
+
+  it('warns once this round\'s public scoring window is used', () => {
+    expect(getReminders(statusPhase({ scoredPublicThisRound: true })).map((x) => x.id)).toContain('public-window-used')
+    expect(getReminders(statusPhase({ scoredPublicThisRound: false })).map((x) => x.id)).not.toContain('public-window-used')
+  })
+
+  it('reports victory-point progress in the status phase', () => {
+    const vp = getReminders(statusPhase({ victoryPoints: 4 })).find((x) => x.id === 'vp-progress')
+    expect(vp?.text).toContain('4')
+    expect(vp?.text).toContain('10')
+  })
+
+  it('flags a scorable Stage II objective', () => {
+    expect(getReminders(statusPhase(), { stageTwoScorable: true }).map((x) => x.id)).toContain('stage-two-available')
+    expect(getReminders(statusPhase()).map((x) => x.id)).not.toContain('stage-two-available')
+  })
+
+  it('keeps the action phase free of status-phase reminders', () => {
+    const ids = getReminders(actionPhase(), { scorablePublicCount: 3 }).map((x) => x.id)
+    expect(ids).not.toContain('scorable-publics')
+    expect(ids).toContain('fleet-pool')
   })
 })
