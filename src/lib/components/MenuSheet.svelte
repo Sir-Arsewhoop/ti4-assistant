@@ -12,7 +12,7 @@
     factions: Faction[]
     technologies: Technology[]
     strategyCards: StrategyCard[]
-    objectives: Objective[]
+    publicObjectives: Objective[]
     planets: PlanetCatalogEntry[]
     themeLabel: string
     onToggleTheme: () => void
@@ -21,7 +21,7 @@
     onExport: () => void
     onImport: (file: File) => void
   }
-  let { open, onClose, state: gameState, factions, technologies, strategyCards, objectives, planets, themeLabel, onToggleTheme, onAction, onNewGame, onExport, onImport }: Props = $props()
+  let { open, onClose, state: gameState, factions, technologies, strategyCards, publicObjectives, planets, themeLabel, onToggleTheme, onAction, onNewGame, onExport, onImport }: Props = $props()
 
   type Section = 'reference' | 'board' | 'games'
   let section = $state<Section>('reference')
@@ -48,7 +48,7 @@
       </div>
 
       {#if section === 'reference'}
-        <ReferenceBrowser {factions} {technologies} {strategyCards} {objectives} {planets} />
+        <ReferenceBrowser {factions} {technologies} {strategyCards} {publicObjectives} {planets} />
       {:else if section === 'board'}
         <BoardEditor state={gameState} {technologies} planetCatalog={planets} {onAction} />
       {:else}

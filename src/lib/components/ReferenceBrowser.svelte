@@ -2,8 +2,8 @@
   import type { Faction, Technology, StrategyCard, Objective, PlanetCatalogEntry } from '../../content/schema'
   import ExpandableItem from './ExpandableItem.svelte'
 
-  interface Props { factions: Faction[]; technologies: Technology[]; strategyCards: StrategyCard[]; objectives: Objective[]; planets: PlanetCatalogEntry[] }
-  let { factions, technologies, strategyCards, objectives, planets }: Props = $props()
+  interface Props { factions: Faction[]; technologies: Technology[]; strategyCards: StrategyCard[]; publicObjectives: Objective[]; planets: PlanetCatalogEntry[] }
+  let { factions, technologies, strategyCards, publicObjectives, planets }: Props = $props()
 
   type Kind = 'faction' | 'tech' | 'strategy' | 'objective' | 'planet'
   type Entry = { id: string; title: string; summary: string; detail: string }
@@ -25,7 +25,7 @@
         : kind === 'strategy'
           ? strategyCards.map((c) => ({ id: String(c.initiative), title: `${c.initiative}. ${c.name}`, summary: c.primary, detail: `Primary: ${c.primary}\nSecondary: ${c.secondary}` }))
           : kind === 'objective'
-            ? objectives.map((o) => ({ id: o.id, title: o.name, summary: o.summary, detail: `${o.points} VP · ${o.phase}\n${o.summary}` }))
+            ? publicObjectives.map((o) => ({ id: o.id, title: o.name, summary: o.summary, detail: `${o.points} VP · ${o.phase}\n${o.summary}` }))
             : planets.map((pl) => ({
                 id: pl.id,
                 title: pl.name,

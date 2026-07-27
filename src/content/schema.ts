@@ -53,13 +53,20 @@ export const factionSchema = z.object({
 })
 export type Faction = z.infer<typeof factionSchema>
 
-export const objectiveSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  points: z.number().int().min(1).max(2),
-  phase: z.enum(['status', 'action', 'agenda']),
-  summary: z.string(),
-})
+export const objectiveSchema = z
+  .object({
+    id: z.string(),
+    name: z.string(),
+    points: z.number().int().min(1).max(2),
+    stage: z.enum(['I', 'II']),
+    expansion: z.enum(['base', 'pok']),
+    phase: z.enum(['status', 'action', 'agenda']),
+    summary: z.string(),
+  })
+  .refine((o) => o.points === (o.stage === 'I' ? 1 : 2), {
+    message: 'Stage I objectives are worth 1 point and Stage II objectives 2',
+    path: ['points'],
+  })
 export type Objective = z.infer<typeof objectiveSchema>
 
 export const planetCatalogSchema = z.object({

@@ -12,7 +12,7 @@ const technologies: Technology[] = [
   { id: 'carrier-ii', name: 'Carrier II', color: 'none', type: 'unit-upgrade', expansion: 'base', prerequisites: ['blue', 'blue'], summary: 'Upgraded Carrier.', hasAction: false },
 ]
 const strategyCards: StrategyCard[] = [{ initiative: 7, name: 'Technology', primary: 'Research.', secondary: 'Pay to research.' }]
-const objectives: Objective[] = [{ id: 'o1', name: 'Diversify Research', points: 1, phase: 'status', summary: 'Own techs.' }]
+const publicObjectives: Objective[] = [{ id: 'o1', name: 'Diversify Research', points: 1, stage: 'I', expansion: 'base', phase: 'status', summary: 'Own techs.' }]
 const planets: PlanetCatalogEntry[] = [
   { id: 'meer', name: 'Meer', resources: 0, influence: 4, trait: 'hazardous', techSpecialty: 'red', legendary: false, expansion: 'base' },
   { id: 'primor', name: 'Primor', resources: 2, influence: 1, trait: 'cultural', legendary: true, legendaryAbility: 'Place up to 2 infantry.', expansion: 'pok' },
@@ -20,7 +20,7 @@ const planets: PlanetCatalogEntry[] = [
 
 describe('ReferenceBrowser', () => {
   it('shows factions by default and filters by search text', async () => {
-    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, objectives, planets } })
+    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, publicObjectives, planets } })
     expect(screen.getByText('Universities of Jol-Nar')).toBeTruthy()
     expect(screen.getByText('Federation of Sol')).toBeTruthy()
     await fireEvent.input(screen.getByPlaceholderText('Search'), { target: { value: 'jol' } })
@@ -29,27 +29,27 @@ describe('ReferenceBrowser', () => {
   })
 
   it('switches to the technology list', async () => {
-    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, objectives, planets } })
+    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, publicObjectives, planets } })
     await fireEvent.click(screen.getByRole('button', { name: /Tech/ }))
     expect(screen.getByText('Plasma Scoring')).toBeTruthy()
   })
 
   it('shows a faction\'s starting units and planets when expanded', async () => {
-    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, objectives, planets } })
+    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, publicObjectives, planets } })
     await fireEvent.click(screen.getByText('Universities of Jol-Nar'))
     expect(screen.getByText(/2 Carriers/)).toBeTruthy()
     expect(screen.getByText(/Home planets: Jol/)).toBeTruthy()
   })
 
   it('lists catalog planets in the Planets tab', async () => {
-    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, objectives, planets } })
+    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, publicObjectives, planets } })
     await fireEvent.click(screen.getByRole('button', { name: /Planets/ }))
     expect(screen.getByText('Meer')).toBeTruthy()
     expect(screen.getByText('Primor')).toBeTruthy()
   })
 
   it('groups the technology tab with a Unit Upgrades header', async () => {
-    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, objectives, planets } })
+    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, publicObjectives, planets } })
     await fireEvent.click(screen.getByRole('button', { name: /Tech/ }))
     expect(screen.getByText('Unit Upgrades')).toBeTruthy()
     expect(screen.getByText('Warfare (red)')).toBeTruthy()

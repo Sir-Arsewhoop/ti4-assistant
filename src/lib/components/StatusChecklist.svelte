@@ -3,10 +3,10 @@
   import type { Objective } from '../../content/schema'
   import ExpandableItem from './ExpandableItem.svelte'
 
-  interface Props { state: GameState; objectives: Objective[]; onAction: (a: GameAction) => void }
-  let { state: gameState, objectives, onAction }: Props = $props()
+  interface Props { state: GameState; publicObjectives: Objective[]; onAction: (a: GameAction) => void }
+  let { state: gameState, publicObjectives, onAction }: Props = $props()
 
-  const unscored = $derived(objectives.filter((o) => !gameState.scoredPublicObjectiveIds.includes(o.id)))
+  const unscored = $derived(publicObjectives.filter((o) => !gameState.scoredPublicObjectiveIds.includes(o.id)))
 
   let drewCards = $state(false)
   let repaired = $state(false)

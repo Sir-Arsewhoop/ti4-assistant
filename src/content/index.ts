@@ -3,14 +3,14 @@ import { factionSchema, objectiveSchema, strategyCardSchema, technologySchema, p
 import { strategyCards } from './strategyCards'
 import { technologies } from './technologies'
 import { factions } from './factions'
-import { objectives } from './objectives'
+import { publicObjectives } from './publicObjectives'
 import { planets } from './planets'
 
 export const content = {
   strategyCards: z.array(strategyCardSchema).parse(strategyCards),
   technologies: z.array(technologySchema).parse(technologies),
   factions: z.array(factionSchema).parse(factions),
-  objectives: z.array(objectiveSchema).parse(objectives),
+  publicObjectives: z.array(objectiveSchema).parse(publicObjectives),
   planets: z.array(planetCatalogSchema).parse(planets),
 }
 

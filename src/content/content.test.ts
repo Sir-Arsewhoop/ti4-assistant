@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { content, getFaction } from './index'
+import { objectiveSchema } from './schema'
 
 describe('content registry', () => {
   it('validates and exposes all 8 strategy cards', () => {
@@ -105,5 +106,41 @@ describe('content registry', () => {
   it('flags component actions only on sling-relay and x-89-bacterial-weapon', () => {
     const withAction = content.technologies.filter((t) => t.hasAction).map((t) => t.id).sort()
     expect(withAction).toEqual(['sling-relay', 'x-89-bacterial-weapon'])
+  })
+
+  it('exposes the full 40-card public objective deck (20 Stage I + 20 Stage II)', () => {
+    expect(content.publicObjectives).toHaveLength(40)
+    expect(content.publicObjectives.filter((o) => o.stage === 'I')).toHaveLength(20)
+    expect(content.publicObjectives.filter((o) => o.stage === 'II')).toHaveLength(20)
+  })
+
+  it('splits each stage evenly between base and PoK', () => {
+    for (const stage of ['I', 'II'] as const) {
+      const inStage = content.publicObjectives.filter((o) => o.stage === stage)
+      expect(inStage.filter((o) => o.expansion === 'base')).toHaveLength(10)
+      expect(inStage.filter((o) => o.expansion === 'pok')).toHaveLength(10)
+    }
+  })
+
+  it('keeps stage and points in lockstep, and scores every public in the status phase', () => {
+    for (const o of content.publicObjectives) {
+      expect(o.points).toBe(o.stage === 'I' ? 1 : 2)
+      expect(o.phase).toBe('status')
+    }
+  })
+
+  it('has unique public objective ids', () => {
+    const ids = content.publicObjectives.map((o) => o.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('still includes the objectives the old stub carried', () => {
+    const ids = new Set(content.publicObjectives.map((o) => o.id))
+    for (const id of ['diversify-research', 'develop-weaponry', 'lead-from-the-front']) expect(ids.has(id)).toBe(true)
+  })
+
+  it('rejects an objective whose stage and points disagree', () => {
+    const bad = { id: 'x', name: 'X', points: 2, stage: 'I', expansion: 'base', phase: 'status', summary: 'y' }
+    expect(objectiveSchema.safeParse(bad).success).toBe(false)
   })
 })

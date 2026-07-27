@@ -147,7 +147,7 @@
       <h2 style="font-size:18px;font-weight:500;">Action phase — what can I do now?</h2>
       <ActionPanel {actions} onAct={act} />
     {:else if gameState.phase === 'status'}
-      <StatusChecklist state={gameState} objectives={content.objectives} onAction={(a) => store?.dispatch(a)} />
+      <StatusChecklist state={gameState} publicObjectives={content.publicObjectives} onAction={(a) => store?.dispatch(a)} />
     {:else if gameState.phase === 'agenda'}
       <AgendaHelper state={gameState} onAction={(a) => store?.dispatch(a)} />
     {:else}
@@ -171,7 +171,7 @@
     factions={content.factions}
     technologies={content.technologies}
     strategyCards={content.strategyCards}
-    objectives={content.objectives}
+    publicObjectives={content.publicObjectives}
     planets={content.planets}
     themeLabel={prefs.theme}
     onToggleTheme={cycleTheme}
