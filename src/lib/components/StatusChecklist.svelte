@@ -33,12 +33,6 @@
   function unreveal(o: Objective) {
     onAction({ type: 'editState', patch: { revealedPublicObjectiveIds: gameState.revealedPublicObjectiveIds.filter((id) => id !== o.id) } })
   }
-  function scoreSecret() {
-    onAction({ type: 'editState', patch: {
-      secretObjectives: [...gameState.secretObjectives, { id: `secret-${gameState.secretObjectives.length + 1}`, scored: true }],
-      victoryPoints: gameState.victoryPoints + 1,
-    } })
-  }
   function adjustPool(pool: 'tactic' | 'fleet' | 'strategy', delta: number) {
     onAction({ type: 'editState', patch: { command: { ...gameState.command, [pool]: Math.max(0, gameState.command[pool] + delta) } } })
   }
@@ -69,9 +63,6 @@
 {#each revealMatches as o (o.id)}
   <button onclick={() => reveal(o)} aria-label={`reveal ${o.name}`} style="display:block;width:100%;text-align:left;margin:4px 0;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">+ {o.name} (Stage {o.stage}, +{o.points})</button>
 {/each}
-
-<ExpandableItem title="Score a secret objective" summary="If you completed one, reveal it for VP." detail="Secret objective content isn't loaded yet, so this just records a secret scored (+1 VP)." />
-<button onclick={scoreSecret} style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;">Scored a secret (+1 VP)</button>
 
 <ExpandableItem title="Gain + redistribute command tokens" summary="Gain 2 tokens, then place them across your pools." detail="In the status phase you gain 2 command tokens and redistribute your pools." />
 {#each (['tactic', 'fleet', 'strategy'] as const) as pool (pool)}

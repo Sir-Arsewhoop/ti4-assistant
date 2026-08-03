@@ -2,7 +2,7 @@
   import { content, getFaction } from './content/index'
   import { createInitialState } from './domain/initialState'
   import { createGameStore } from './state/store.svelte'
-  import { getAvailableActions, getReminders, getResearchableTechs, getScorablePublicObjectives } from './engine/index'
+  import { getAvailableActions, getReminders, getResearchableTechs, getScorablePublicObjectives, getHeldSecretObjectives } from './engine/index'
   import { saveGame, loadGame, exportGame, importGame } from './persistence/storage'
   import { onMount, untrack } from 'svelte'
   import { loadPrefs, savePrefs } from './lib/prefs'
@@ -18,6 +18,7 @@
   import StatusChecklist from './lib/components/StatusChecklist.svelte'
   import AgendaHelper from './lib/components/AgendaHelper.svelte'
   import MenuSheet from './lib/components/MenuSheet.svelte'
+  import SecretPanel from './lib/components/SecretPanel.svelte'
   import ResearchPicker from './lib/components/ResearchPicker.svelte'
 
   let prefs = $state(loadPrefs())
@@ -52,9 +53,18 @@
   const actions = $derived(gameState ? getAvailableActions(gameState, { componentActionSources }) : [])
   const scorablePublics = $derived(gameState ? getScorablePublicObjectives(gameState, content.publicObjectives) : [])
   const stageTwoScorable = $derived(scorablePublics.some((o) => o.stage === 'II'))
+  const heldSecrets = $derived(gameState ? getHeldSecretObjectives(gameState, content.secretObjectives) : [])
+  const scorableSecretCount = $derived(heldSecrets.filter((h) => h.scorableNow).length)
+  const scoredSecretIds = $derived(gameState ? gameState.secretObjectives.filter((s) => s.scored).map((s) => s.id) : [])
   const reminders = $derived(
     gameState
-      ? getReminders(gameState, { researchableCount: researchableIds.size, scorablePublicCount: scorablePublics.length, stageTwoScorable })
+      ? getReminders(gameState, {
+          researchableCount: researchableIds.size,
+          scorablePublicCount: scorablePublics.length,
+          stageTwoScorable,
+          scorableSecretCount,
+          heldSecretCount: heldSecrets.length,
+        })
       : [],
   )
 
@@ -139,6 +149,17 @@
     const next = held.includes(initiative) ? held.filter((n) => n !== initiative) : [...held, initiative]
     store.dispatch({ type: 'editState', patch: { strategyCardIds: next } })
   }
+
+  function drawSecret(objectiveId: string, name: string) {
+    store?.dispatch({ type: 'drawSecretObjective', objectiveId, name })
+  }
+  function scoreSecret(objectiveId: string, name: string) {
+    store?.dispatch({ type: 'scoreSecretObjective', objectiveId, name })
+  }
+  function discardSecret(objectiveId: string) {
+    if (!store) return
+    store.dispatch({ type: 'editState', patch: { secretObjectives: store.state.secretObjectives.filter((s) => s.id !== objectiveId) } })
+  }
 </script>
 
 {#if !store || !gameState}
@@ -149,13 +170,17 @@
   <main style="padding:16px;max-width:480px;margin:0 auto;">
     {#if gameState.phase === 'strategy'}
       <StrategyPhase cards={content.strategyCards} selected={gameState.strategyCardIds} onToggle={toggleStrategyCard} />
+      <SecretPanel secrets={content.secretObjectives} held={heldSecrets} scoredIds={scoredSecretIds} onDraw={drawSecret} onScore={scoreSecret} onDiscard={discardSecret} />
     {:else if gameState.phase === 'action'}
       <h2 style="font-size:18px;font-weight:500;">Action phase — what can I do now?</h2>
       <ActionPanel {actions} onAct={act} />
+      <SecretPanel secrets={content.secretObjectives} held={heldSecrets} scoredIds={scoredSecretIds} onDraw={drawSecret} onScore={scoreSecret} onDiscard={discardSecret} />
     {:else if gameState.phase === 'status'}
       <StatusChecklist state={gameState} publicObjectives={content.publicObjectives} onAction={(a) => store?.dispatch(a)} />
+      <SecretPanel secrets={content.secretObjectives} held={heldSecrets} scoredIds={scoredSecretIds} onDraw={drawSecret} onScore={scoreSecret} onDiscard={discardSecret} />
     {:else if gameState.phase === 'agenda'}
       <AgendaHelper state={gameState} onAction={(a) => store?.dispatch(a)} />
+      <SecretPanel secrets={content.secretObjectives} held={heldSecrets} scoredIds={scoredSecretIds} onDraw={drawSecret} onScore={scoreSecret} onDiscard={discardSecret} />
     {:else}
       <h2 style="font-size:18px;font-weight:500;">{gameState.phase} phase</h2>
     {/if}

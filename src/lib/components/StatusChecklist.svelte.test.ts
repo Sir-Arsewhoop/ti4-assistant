@@ -69,4 +69,9 @@ describe('StatusChecklist', () => {
     await fireEvent.click(screen.getByRole('button', { name: /unreveal Diversify Research/i }))
     expect(onAction).toHaveBeenCalledWith({ type: 'editState', patch: { revealedPublicObjectiveIds: [] } })
   })
+
+  it('no longer carries the secret-objective placeholder', () => {
+    render(StatusChecklist, { props: { state: state(), publicObjectives, onAction: vi.fn() } })
+    expect(screen.queryByRole('button', { name: /Scored a secret/i })).toBeNull()
+  })
 })
