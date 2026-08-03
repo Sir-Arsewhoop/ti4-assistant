@@ -71,6 +71,8 @@ export type GameAction =
   | { type: 'exhaustPlanet'; planetId: string }
   | { type: 'scorePublicObjective'; objectiveId: string; points: number }
   | { type: 'revealPublicObjective'; objectiveId: string; name: string }
+  | { type: 'drawSecretObjective'; objectiveId: string; name: string }
+  | { type: 'scoreSecretObjective'; objectiveId: string; name: string }
   | { type: 'gainPlanet'; planet: Planet }
   | { type: 'removePlanet'; planetId: string }
   | { type: 'researchTechnology'; techId: string; name: string }

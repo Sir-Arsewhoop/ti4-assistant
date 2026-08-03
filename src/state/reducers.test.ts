@@ -128,4 +128,42 @@ describe('applyAction', () => {
     expect(s.phase).toBe('strategy')
     expect(s.scoredPublicThisRound).toBe(false)
   })
+
+  it('drawSecretObjective holds the secret unscored, logs, and is idempotent', () => {
+    const s1 = applyAction(base(), { type: 'drawSecretObjective', objectiveId: 'brave-the-void', name: 'Brave the Void' })
+    expect(s1.secretObjectives).toEqual([{ id: 'brave-the-void', scored: false }])
+    expect(s1.log.at(-1)?.summary).toBe('Drew Brave the Void')
+    const s2 = applyAction(s1, { type: 'drawSecretObjective', objectiveId: 'brave-the-void', name: 'Brave the Void' })
+    expect(s2).toBe(s1)
+  })
+
+  it('scoreSecretObjective scores a held secret once for exactly 1 VP', () => {
+    const held = applyAction(base(), { type: 'drawSecretObjective', objectiveId: 'seize-an-icon', name: 'Seize an Icon' })
+    const s1 = applyAction(held, { type: 'scoreSecretObjective', objectiveId: 'seize-an-icon', name: 'Seize an Icon' })
+    expect(s1.secretObjectives).toEqual([{ id: 'seize-an-icon', scored: true }])
+    expect(s1.victoryPoints).toBe(held.victoryPoints + 1)
+    expect(s1.log.at(-1)?.summary).toBe('Scored Seize an Icon (+1 VP)')
+    const s2 = applyAction(s1, { type: 'scoreSecretObjective', objectiveId: 'seize-an-icon', name: 'Seize an Icon' })
+    expect(s2).toBe(s1)
+  })
+
+  it('scoreSecretObjective ignores a secret the player never drew', () => {
+    const s = base()
+    expect(applyAction(s, { type: 'scoreSecretObjective', objectiveId: 'never-drawn', name: 'Never Drawn' })).toBe(s)
+  })
+
+  it('scoring a secret marks the window only in the status phase', () => {
+    const drawn = (phase: GameState['phase']) =>
+      applyAction(base({ phase }), { type: 'drawSecretObjective', objectiveId: 'brave-the-void', name: 'Brave the Void' })
+    const inStatus = applyAction(drawn('status'), { type: 'scoreSecretObjective', objectiveId: 'brave-the-void', name: 'Brave the Void' })
+    expect(inStatus.scoredSecretThisRound).toBe(true)
+    const inAction = applyAction(drawn('action'), { type: 'scoreSecretObjective', objectiveId: 'brave-the-void', name: 'Brave the Void' })
+    expect(inAction.scoredSecretThisRound).toBe(false)
+  })
+
+  it('advancePhase clears the secret scoring window on round rollover', () => {
+    const s = applyAction(base({ phase: 'status', scoredSecretThisRound: true, custodiansTaken: false }), { type: 'advancePhase' })
+    expect(s.phase).toBe('strategy')
+    expect(s.scoredSecretThisRound).toBe(false)
+  })
 })

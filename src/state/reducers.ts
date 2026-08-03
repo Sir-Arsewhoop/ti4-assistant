@@ -60,6 +60,29 @@ export function applyAction(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'drawSecretObjective': {
+      if (state.secretObjectives.some((s) => s.id === action.objectiveId)) return state
+      return {
+        ...state,
+        secretObjectives: [...state.secretObjectives, { id: action.objectiveId, scored: false }],
+        log: log(state, `Drew ${action.name}`),
+      }
+    }
+
+    case 'scoreSecretObjective': {
+      // Only a held, unscored secret can be scored: an unknown id would otherwise
+      // mint victory points, and a re-score would double them.
+      const held = state.secretObjectives.find((s) => s.id === action.objectiveId)
+      if (!held || held.scored) return state
+      return {
+        ...state,
+        secretObjectives: state.secretObjectives.map((s) => (s.id === action.objectiveId ? { ...s, scored: true } : s)),
+        victoryPoints: state.victoryPoints + 1,
+        scoredSecretThisRound: state.phase === 'status' ? true : state.scoredSecretThisRound,
+        log: log(state, `Scored ${action.name} (+1 VP)`),
+      }
+    }
+
     case 'advancePhase': {
       const next: Phase =
         state.phase === 'status'
@@ -75,6 +98,7 @@ export function applyAction(state: GameState, action: GameAction): GameState {
         strategyPrimaryUsed: next === 'strategy' ? false : state.strategyPrimaryUsed,
         passed: next === 'strategy' ? false : state.passed,
         scoredPublicThisRound: enteringNewRound ? false : state.scoredPublicThisRound,
+        scoredSecretThisRound: enteringNewRound ? false : state.scoredSecretThisRound,
         log: log(state, `Advanced to ${next} phase`),
       }
     }
