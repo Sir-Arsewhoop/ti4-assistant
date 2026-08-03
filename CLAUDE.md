@@ -59,29 +59,35 @@ full 40-card base+PoK public objective deck (20 Stage I + 20 Stage II) with `sta
 scoring window flag (`scoredPublicThisRound`), a `withStateDefaults` legacy-save migration,
 the pure `getScorablePublicObjectives` helper, status-phase reminders, the StatusChecklist
 reveal picker + revealed-only stage-grouped scoring (each revealed objective is individually
-un-revealable), and the stage-grouped Objectives reference tab. 143 tests, check 0/0,
-build OK.
+un-revealable), and the stage-grouped Objectives reference tab + **secret objectives**
+(Objectives sub-cycle 2b, closing the objectives cycle): the full 40-card base+PoK secret
+deck (26 status / 12 action / 2 agenda, each 1 VP) on its own standalone
+`secretObjectiveSchema`, a `scoredSecretThisRound` window flag (set only in the status phase —
+action and agenda windows are per-combat / per-timing-window and are described by reminders
+instead of modelled), `drawSecretObjective` + `scoreSecretObjective` actions, the pure
+`getHeldSecretObjectives` helper tagging each held secret `scorableNow`, secret reminders plus
+a new agenda-phase reminder branch, and the presentational `SecretPanel` (whole hand with phase
+tags, scorable highlighted, draw picker, per-row discard) mounted in all four post-setup
+phases. The `secret-N` placeholder is gone. 175 tests, check 0/0, build OK.
 
 Full history lives in `docs/superpowers/specs/` and `docs/superpowers/plans/` (esp. the
-`2026-07-24-*` faction-breadth, planet-catalog, and tech-tree files, and the
-`2026-07-27-*` public-objectives pair) and git log.
+`2026-07-24-*` faction-breadth, planet-catalog, and tech-tree files, the
+`2026-07-27-*` public-objectives pair, and the `2026-07-28-*` secret-objectives pair) and
+git log.
 
 ## Next cycles (each: brainstorm → spec → plan → build)
 
-1. Secret objectives (Objectives sub-cycle 2b — public half shipped this cycle; this is the
-   full secret deck: draw-and-hold, phase-tagged secret scoring, secret reminders, and
-   retiring the `secret-N` placeholder in StatusChecklist)
-2. Leaders / mechs / faction-tech (faction depth — the same wiki `{{Main Infobox 1}}`
+1. Leaders / mechs / faction-tech (faction depth — the same wiki `{{Main Infobox 1}}`
    exposes all of it)
-3. Trait-aware reminders (planets now carry traits)
-4. Action + agenda card references
+2. Trait-aware reminders (planets now carry traits)
+3. Action + agenda card references
 
-Deferred polish (from tech-tree final review, non-blocking): extract the duplicated
-`TECH_GROUPS` array shared by `ResearchPicker.svelte` + `ReferenceBrowser.svelte` into one
-module; consider a Zod `.refine()` enforcing the `unit-upgrade ⟺ color:'none'` invariant;
-a copyright pass over the pre-existing (non-tech-tree) content summaries; extract a shared
-`GroupedEntries` presentational component (the objective and tech grouped-render blocks in
-`ReferenceBrowser.svelte` are now structurally identical, and `TECH_GROUPS` is still
-duplicated with `ResearchPicker.svelte`); split `objectiveSchema` into a plain
-`objectiveBase` object plus the refined export, because `.refine()` makes it a `ZodEffects`
-that 2b's secret schema cannot `.extend()`.
+Deferred polish (non-blocking): consider a Zod `.refine()` enforcing the
+`unit-upgrade ⟺ color:'none'` invariant; a copyright pass over the pre-existing
+(non-tech-tree, non-objective) content summaries.
+
+Retired by the 2b cycle: the duplicated `TECH_GROUPS` array now lives in `src/lib/techGroups.ts`
+and is shared by `ResearchPicker.svelte` + `ReferenceBrowser.svelte`; the grouped-render block
+is now the `GroupedEntries.svelte` component used by the objectives, tech, and secrets reference
+tabs. The proposed `objectiveBase` split was dropped as unnecessary — secrets got their own
+standalone schema rather than extending the public one.
