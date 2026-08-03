@@ -23,6 +23,7 @@ export function withStateDefaults(raw: Partial<GameState>): GameState {
     ...(raw as GameState),
     revealedPublicObjectiveIds: raw.revealedPublicObjectiveIds ?? [],
     scoredPublicThisRound: raw.scoredPublicThisRound ?? false,
+    scoredSecretThisRound: raw.scoredSecretThisRound ?? false,
   }
 }
 

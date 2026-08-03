@@ -63,6 +63,22 @@ describe('persistence', () => {
     expect(imported.scoredPublicThisRound).toBe(false)
   })
 
+  it('defaults the secret scoring-window flag for a legacy save on load', async () => {
+    const legacy = { ...state() } as Record<string, unknown>
+    delete legacy.scoredSecretThisRound
+    await saveGame('legacy-secret', legacy as never)
+    const loaded = await loadGame('legacy-secret')
+    expect(loaded?.scoredSecretThisRound).toBe(false)
+  })
+
+  it('defaults the secret scoring-window flag for a legacy import, and keeps a present value', () => {
+    const legacy = { ...state() } as Record<string, unknown>
+    delete legacy.scoredSecretThisRound
+    expect(importGame(JSON.stringify(legacy)).scoredSecretThisRound).toBe(false)
+    const present = importGame(exportGame({ ...state(), scoredSecretThisRound: true }))
+    expect(present.scoredSecretThisRound).toBe(true)
+  })
+
   it('does not clobber values that are present', () => {
     const s = { ...state(), revealedPublicObjectiveIds: ['corner-the-market'], scoredPublicThisRound: true }
     const imported = importGame(exportGame(s))

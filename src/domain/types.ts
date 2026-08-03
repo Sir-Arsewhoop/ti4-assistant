@@ -38,6 +38,7 @@ export type GameState = {
   scoredPublicObjectiveIds: string[]
   revealedPublicObjectiveIds: string[]
   scoredPublicThisRound: boolean
+  scoredSecretThisRound: boolean
   secretObjectives: SecretObjective[]
   victoryPoints: number
   leaders: LeaderState

@@ -20,6 +20,7 @@ export function createInitialState(
     scoredPublicObjectiveIds: [],
     revealedPublicObjectiveIds: [],
     scoredPublicThisRound: false,
+    scoredSecretThisRound: false,
     secretObjectives: [],
     victoryPoints: 0,
     leaders: { agentUnlocked: false, commanderUnlocked: false, heroUnlocked: false },

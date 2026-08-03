@@ -45,4 +45,9 @@ describe('createInitialState', () => {
     expect(s.revealedPublicObjectiveIds).toEqual([])
     expect(s.scoredPublicThisRound).toBe(false)
   })
+
+  it('seeds the secret scoring-window flag', () => {
+    const s = createInitialState(fixture, { turnOrder: 1, speaker: false })
+    expect(s.scoredSecretThisRound).toBe(false)
+  })
 })
