@@ -15,6 +15,10 @@ function statusPhase(overrides: Partial<GameState> = {}): GameState {
   const s = createInitialState(faction, { turnOrder: 1, speaker: false })
   return { ...s, phase: 'status', ...overrides }
 }
+function agendaPhase(overrides: Partial<GameState> = {}): GameState {
+  const s = createInitialState(faction, { turnOrder: 1, speaker: false })
+  return { ...s, phase: 'agenda', ...overrides }
+}
 
 describe('getReminders', () => {
   it('reminds you to use your strategy primary if unused in the action phase', () => {
@@ -33,11 +37,38 @@ describe('getReminders', () => {
     expect(getReminders(s).map((r) => r.id)).toContain('exhausted-planets')
   })
 
-  it('is quiet in phases with no reminders yet (setup, strategy, agenda)', () => {
+  it('is quiet in phases with no reminders yet (setup, strategy)', () => {
     const s = createInitialState(faction, { turnOrder: 1, speaker: false }) // setup
     expect(getReminders(s)).toEqual([])
     expect(getReminders({ ...s, phase: 'strategy' })).toEqual([])
-    expect(getReminders({ ...s, phase: 'agenda' })).toEqual([])
+  })
+
+  it('counts scorable secrets in each scoring phase', () => {
+    expect(getReminders(statusPhase(), { scorableSecretCount: 2 }).map((r) => r.id)).toContain('scorable-secrets')
+    expect(getReminders(actionPhase(), { scorableSecretCount: 1 }).map((r) => r.id)).toContain('scorable-secrets')
+    expect(getReminders(agendaPhase(), { scorableSecretCount: 1 }).map((r) => r.id)).toContain('scorable-secrets')
+    expect(getReminders(statusPhase(), { scorableSecretCount: 0 }).map((r) => r.id)).not.toContain('scorable-secrets')
+  })
+
+  it('warns once this round\'s secret window is used, in the status phase only', () => {
+    expect(getReminders(statusPhase({ scoredSecretThisRound: true })).map((r) => r.id)).toContain('secret-window-used')
+    expect(getReminders(actionPhase({ scoredSecretThisRound: true })).map((r) => r.id)).not.toContain('secret-window-used')
+  })
+
+  it('notes a full secret hand at three held', () => {
+    expect(getReminders(statusPhase(), { heldSecretCount: 3 }).map((r) => r.id)).toContain('secret-hand-full')
+    expect(getReminders(statusPhase(), { heldSecretCount: 2 }).map((r) => r.id)).not.toContain('secret-hand-full')
+  })
+
+  it('states the per-window rule for action and agenda secrets', () => {
+    expect(getReminders(actionPhase()).map((r) => r.id)).toContain('action-secret-window')
+    expect(getReminders(agendaPhase()).map((r) => r.id)).toContain('agenda-secret-window')
+    expect(getReminders(statusPhase()).map((r) => r.id)).not.toContain('action-secret-window')
+  })
+
+  it('reminds about the Imperial strategy card only when held', () => {
+    expect(getReminders(actionPhase({ strategyCardIds: [8] })).map((r) => r.id)).toContain('imperial-card')
+    expect(getReminders(actionPhase({ strategyCardIds: [1] })).map((r) => r.id)).not.toContain('imperial-card')
   })
 
   it('includes a fleet-pool info reminder in the action phase', () => {
