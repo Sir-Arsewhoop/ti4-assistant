@@ -69,6 +69,16 @@ export const objectiveSchema = z
   })
 export type Objective = z.infer<typeof objectiveSchema>
 
+export const secretObjectiveSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  points: z.literal(1),
+  phase: z.enum(['status', 'action', 'agenda']),
+  expansion: z.enum(['base', 'pok']),
+  summary: z.string(),
+})
+export type SecretObjective = z.infer<typeof secretObjectiveSchema>
+
 export const planetCatalogSchema = z.object({
   id: z.string(),
   name: z.string(),

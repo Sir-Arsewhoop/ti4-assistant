@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { content, getFaction } from './index'
-import { objectiveSchema } from './schema'
+import { objectiveSchema, secretObjectiveSchema } from './schema'
 
 describe('content registry', () => {
   it('validates and exposes all 8 strategy cards', () => {
@@ -142,5 +142,33 @@ describe('content registry', () => {
   it('rejects an objective whose stage and points disagree', () => {
     const bad = { id: 'x', name: 'X', points: 2, stage: 'I', expansion: 'base', phase: 'status', summary: 'y' }
     expect(objectiveSchema.safeParse(bad).success).toBe(false)
+  })
+
+  it('exposes the full 40-card secret objective deck (20 base + 20 PoK)', () => {
+    expect(content.secretObjectives).toHaveLength(40)
+    expect(content.secretObjectives.filter((o) => o.expansion === 'base')).toHaveLength(20)
+    expect(content.secretObjectives.filter((o) => o.expansion === 'pok')).toHaveLength(20)
+  })
+
+  it('splits secrets across scoring windows 26 status / 12 action / 2 agenda', () => {
+    expect(content.secretObjectives.filter((o) => o.phase === 'status')).toHaveLength(26)
+    expect(content.secretObjectives.filter((o) => o.phase === 'action')).toHaveLength(12)
+    expect(content.secretObjectives.filter((o) => o.phase === 'agenda')).toHaveLength(2)
+  })
+
+  it('makes every secret worth exactly 1 victory point', () => {
+    for (const o of content.secretObjectives) expect(o.points).toBe(1)
+  })
+
+  it('has unique secret ids, disjoint from the public catalog', () => {
+    const ids = content.secretObjectives.map((o) => o.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    const publicIds = new Set(content.publicObjectives.map((o) => o.id))
+    for (const id of ids) expect(publicIds.has(id)).toBe(false)
+  })
+
+  it('rejects a secret worth more than 1 point', () => {
+    const bad = { id: 'x', name: 'X', points: 2, phase: 'status', expansion: 'base', summary: 'y' }
+    expect(secretObjectiveSchema.safeParse(bad).success).toBe(false)
   })
 })
