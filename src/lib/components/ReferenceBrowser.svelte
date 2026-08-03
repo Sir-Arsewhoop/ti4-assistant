@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { Faction, Technology, StrategyCard, Objective, PlanetCatalogEntry } from '../../content/schema'
   import ExpandableItem from './ExpandableItem.svelte'
+  import GroupedEntries from './GroupedEntries.svelte'
+  import { TECH_GROUPS } from '../techGroups'
 
   interface Props { factions: Faction[]; technologies: Technology[]; strategyCards: StrategyCard[]; publicObjectives: Objective[]; planets: PlanetCatalogEntry[] }
   let { factions, technologies, strategyCards, publicObjectives, planets }: Props = $props()
@@ -42,13 +44,6 @@
   )
   const entries = $derived(all.filter((e) => e.title.toLowerCase().includes(q.toLowerCase())))
 
-  const TECH_GROUPS: { key: string; label: string; match: (t: Technology) => boolean }[] = [
-    { key: 'blue', label: 'Propulsion (blue)', match: (t) => t.type === 'ability' && t.color === 'blue' },
-    { key: 'green', label: 'Biotic (green)', match: (t) => t.type === 'ability' && t.color === 'green' },
-    { key: 'yellow', label: 'Cybernetic (yellow)', match: (t) => t.type === 'ability' && t.color === 'yellow' },
-    { key: 'red', label: 'Warfare (red)', match: (t) => t.type === 'ability' && t.color === 'red' },
-    { key: 'unit', label: 'Unit Upgrades', match: (t) => t.type === 'unit-upgrade' },
-  ]
   const techGroups = $derived(
     TECH_GROUPS.map((g) => ({
       key: g.key,
@@ -98,21 +93,9 @@
 </div>
 <input placeholder="Search" bind:value={q} style="width:100%;padding:8px;margin-bottom:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);" />
 {#if kind === 'objective'}
-  {#each objectiveGroups as g (g.key)}
-    <h4 style="font-weight:500;margin-top:12px;">{g.label}</h4>
-    {#each g.entries as e (e.id)}
-      <ExpandableItem title={e.title} summary={e.summary} detail={e.detail} />
-    {/each}
-  {/each}
-  {#if objectiveGroups.length === 0}<p style="color:var(--text-muted);font-size:14px;">No matches.</p>{/if}
+  <GroupedEntries groups={objectiveGroups} />
 {:else if kind === 'tech'}
-  {#each techGroups as g (g.key)}
-    <h4 style="font-weight:500;margin-top:12px;">{g.label}</h4>
-    {#each g.entries as e (e.id)}
-      <ExpandableItem title={e.title} summary={e.summary} detail={e.detail} />
-    {/each}
-  {/each}
-  {#if techGroups.length === 0}<p style="color:var(--text-muted);font-size:14px;">No matches.</p>{/if}
+  <GroupedEntries groups={techGroups} />
 {:else}
   {#each entries as e (kind + e.id)}
     <ExpandableItem title={e.title} summary={e.summary} detail={e.detail} />
