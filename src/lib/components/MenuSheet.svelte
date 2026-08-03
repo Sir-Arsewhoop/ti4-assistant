@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { GameState, GameAction } from '../../domain/types'
-  import type { Faction, Technology, StrategyCard, Objective, PlanetCatalogEntry } from '../../content/schema'
+  import type { Faction, Technology, StrategyCard, Objective, SecretObjective, PlanetCatalogEntry } from '../../content/schema'
   import ReferenceBrowser from './ReferenceBrowser.svelte'
   import BoardEditor from './BoardEditor.svelte'
   import GamesSheet from './GamesSheet.svelte'
@@ -13,6 +13,7 @@
     technologies: Technology[]
     strategyCards: StrategyCard[]
     publicObjectives: Objective[]
+    secretObjectives: SecretObjective[]
     planets: PlanetCatalogEntry[]
     themeLabel: string
     onToggleTheme: () => void
@@ -21,7 +22,7 @@
     onExport: () => void
     onImport: (file: File) => void
   }
-  let { open, onClose, state: gameState, factions, technologies, strategyCards, publicObjectives, planets, themeLabel, onToggleTheme, onAction, onNewGame, onExport, onImport }: Props = $props()
+  let { open, onClose, state: gameState, factions, technologies, strategyCards, publicObjectives, secretObjectives, planets, themeLabel, onToggleTheme, onAction, onNewGame, onExport, onImport }: Props = $props()
 
   type Section = 'reference' | 'board' | 'games'
   let section = $state<Section>('reference')
@@ -48,7 +49,7 @@
       </div>
 
       {#if section === 'reference'}
-        <ReferenceBrowser {factions} {technologies} {strategyCards} {publicObjectives} {planets} />
+        <ReferenceBrowser {factions} {technologies} {strategyCards} {publicObjectives} {secretObjectives} {planets} />
       {:else if section === 'board'}
         <BoardEditor state={gameState} {technologies} planetCatalog={planets} {onAction} />
       {:else}

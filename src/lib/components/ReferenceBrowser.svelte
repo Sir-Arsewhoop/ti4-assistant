@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { Faction, Technology, StrategyCard, Objective, PlanetCatalogEntry } from '../../content/schema'
+  import type { Faction, Technology, StrategyCard, Objective, SecretObjective, PlanetCatalogEntry } from '../../content/schema'
   import ExpandableItem from './ExpandableItem.svelte'
   import GroupedEntries from './GroupedEntries.svelte'
   import { TECH_GROUPS } from '../techGroups'
 
-  interface Props { factions: Faction[]; technologies: Technology[]; strategyCards: StrategyCard[]; publicObjectives: Objective[]; planets: PlanetCatalogEntry[] }
-  let { factions, technologies, strategyCards, publicObjectives, planets }: Props = $props()
+  interface Props { factions: Faction[]; technologies: Technology[]; strategyCards: StrategyCard[]; publicObjectives: Objective[]; secretObjectives: SecretObjective[]; planets: PlanetCatalogEntry[] }
+  let { factions, technologies, strategyCards, publicObjectives, secretObjectives, planets }: Props = $props()
 
-  type Kind = 'faction' | 'tech' | 'strategy' | 'objective' | 'planet'
+  type Kind = 'faction' | 'tech' | 'strategy' | 'objective' | 'secret' | 'planet'
   type Entry = { id: string; title: string; summary: string; detail: string }
 
   let kind = $state<Kind>('faction')
@@ -77,11 +77,29 @@
       .filter((g) => g.entries.length > 0),
   )
 
+  const secretGroups = $derived(
+    (['status', 'action', 'agenda'] as const)
+      .map((phase) => ({
+        key: phase,
+        label: `${phase[0].toUpperCase()}${phase.slice(1)} phase`,
+        entries: secretObjectives
+          .filter((o) => o.phase === phase && o.name.toLowerCase().includes(q.toLowerCase()))
+          .map((o) => ({
+            id: o.id,
+            title: o.name,
+            summary: o.summary,
+            detail: `1 VP · ${o.phase} phase · ${o.expansion.toUpperCase()}\n${o.summary}`,
+          })),
+      }))
+      .filter((g) => g.entries.length > 0),
+  )
+
   const tabs: { k: Kind; label: string }[] = [
     { k: 'faction', label: 'Factions' },
     { k: 'tech', label: 'Tech' },
     { k: 'strategy', label: 'Strategy' },
     { k: 'objective', label: 'Objectives' },
+    { k: 'secret', label: 'Secrets' },
     { k: 'planet', label: 'Planets' },
   ]
 </script>
@@ -94,6 +112,8 @@
 <input placeholder="Search" bind:value={q} style="width:100%;padding:8px;margin-bottom:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);" />
 {#if kind === 'objective'}
   <GroupedEntries groups={objectiveGroups} />
+{:else if kind === 'secret'}
+  <GroupedEntries groups={secretGroups} />
 {:else if kind === 'tech'}
   <GroupedEntries groups={techGroups} />
 {:else}

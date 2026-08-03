@@ -203,6 +203,7 @@
     technologies={content.technologies}
     strategyCards={content.strategyCards}
     publicObjectives={content.publicObjectives}
+    secretObjectives={content.secretObjectives}
     planets={content.planets}
     themeLabel={prefs.theme}
     onToggleTheme={cycleTheme}
