@@ -77,10 +77,23 @@ git log.
 
 ## Next cycles (each: brainstorm → spec → plan → build)
 
-1. Leaders / mechs / faction-tech (faction depth — the same wiki `{{Main Infobox 1}}`
-   exposes all of it)
-2. Trait-aware reminders (planets now carry traits)
-3. Action + agenda card references
+Faction depth is split into three sub-cycles (~161 content entries and three distinct state
+models — too big for one spec, same reasoning as the objectives 2a/2b split). Counts sourced
+from AsyncTI4:
+
+1. **3a — Faction technologies** (52 techs across 25 factions, incl. 14 unit upgrades). Pure
+   extension of the existing tech tree: add a `factionId` field, filter `getResearchableTechs`
+   to generic + your own faction's, add a Faction group to `ResearchPicker` + the tech
+   reference tab. No new state — `technologyIds` already carries them.
+2. **3b — Leaders** (83: 28 agents, 26 commanders, 29 heroes, each with an unlock condition).
+   The biggest of the three: replaces the unused 3-boolean `LeaderState` stub with real
+   per-leader unlock / exhaust / purge state, adds a LeaderPanel and unlock reminders.
+3. **3c — Mechs** (26 faction mechs with stats + deploy abilities). Mostly reference-shaped,
+   since the app tracks no unit counts; faction flagships (27) fold in cheaply if wanted —
+   two objectives already reference them.
+4. Trait-aware reminders (planets now carry traits)
+5. Action + agenda card references
+6. UI redesign
 
 Deferred polish (non-blocking): consider a Zod `.refine()` enforcing the
 `unit-upgrade ⟺ color:'none'` invariant; a copyright pass over the pre-existing
