@@ -140,5 +140,5 @@ export const technologies: Technology[] = [
 
   // ── Yssaril Tribes ──
   { id: 'mageon-implants', name: 'Mageon Implants', color: 'green', type: 'ability', expansion: 'base', prerequisites: ['green', 'green', 'green'], summary: 'ACTION: Exhaust to riffle through a rival\'s action cards and help yourself to one.', hasAction: true, factionId: 'yssaril' },
-  { id: 'transparasteel-plating', name: 'Transparasteel Plating', color: 'green', type: 'ability', expansion: 'base', prerequisites: ['green'], summary: 'Players who have already passed cannot play action cards during your action-phase turn.', hasAction: false, factionId: 'yssaril' },
+  { id: 'transparasteel-plating', name: 'Transparasteel Plating', color: 'green', type: 'ability', expansion: 'base', prerequisites: ['green'], summary: 'Once a player has passed, your action-phase turns lock them out of playing action cards.', hasAction: false, factionId: 'yssaril' },
 ]
