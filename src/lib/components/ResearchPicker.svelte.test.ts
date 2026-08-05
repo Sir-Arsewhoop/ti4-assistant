@@ -11,6 +11,7 @@ const technologies: Technology[] = [
   T({ id: 'fleet-logistics', name: 'Fleet Logistics', color: 'blue', prerequisites: ['blue', 'blue'] }),
   T({ id: 'carrier-ii', name: 'Carrier II', color: 'none', type: 'unit-upgrade', prerequisites: ['blue', 'blue'] }),
   T({ id: 'sarween-tools', name: 'Sarween Tools', color: 'yellow', prerequisites: [] }),
+  T({ id: 'advanced-carrier-ii', name: 'Advanced Carrier II', color: 'none', type: 'unit-upgrade', prerequisites: ['blue', 'blue'], factionId: 'sol', replaces: 'carrier-ii' }),
 ]
 
 describe('ResearchPicker', () => {
@@ -33,5 +34,11 @@ describe('ResearchPicker', () => {
     render(ResearchPicker, { props: { technologies, ownedIds: new Set<string>(), researchableIds: new Set<string>(), onResearch: () => {}, onClose } })
     await fireEvent.click(screen.getByRole('button', { name: /close research picker/ }))
     expect(onClose).toHaveBeenCalled()
+  })
+
+  it('gives faction technologies their own group', () => {
+    render(ResearchPicker, { props: { technologies, ownedIds: new Set<string>(), researchableIds: new Set<string>(), onResearch: () => {}, onClose: () => {} } })
+    expect(screen.getByText('Faction')).toBeTruthy()
+    expect(screen.getByRole('button', { name: /research Advanced Carrier II/ })).toBeTruthy()
   })
 })
