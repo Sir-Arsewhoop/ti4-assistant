@@ -45,8 +45,13 @@ the player's own state** and tells them their legal options + reminders each pha
   `planetType: FACTION` (no cultural/industrial/hazardous trait).
 - The M3dnar community JSON dataset has **verified value errors** — do NOT trust it for
   numbers; cross-check against the two sources above.
+- **AsyncTI4 has two known traps for card text, both caught in the 3a cycle** — the wiki wins:
+  it ships some **Codex Ω revisions under `source: base`** (Yin Spinner and Magmus Reactor both
+  bit us; filtering on the Ω name or a codex source does *not* catch these), and its faction
+  `startingTech` can be incomplete (Nekro's omits both Valefar Assimilators). Check any card with
+  an Ω printing against the wiki before cataloguing it — 3b's leaders have Ω versions too.
 
-## State (as of 2026-07-27)
+## State (as of 2026-08-05)
 
 Done + merged to `main`: v1 (setup → strategy → action → status → agenda round loop,
 offline PWA, GitHub Pages deploy) + all **24 factions** (base + PoK) + a **63-planet
@@ -68,12 +73,20 @@ instead of modelled), `drawSecretObjective` + `scoreSecretObjective` actions, th
 `getHeldSecretObjectives` helper tagging each held secret `scorableNow`, secret reminders plus
 a new agenda-phase reminder branch, and the presentational `SecretPanel` (whole hand with phase
 tags, scorable highlighted, draw picker, per-row discard) mounted in all four post-setup
-phases. The `secret-N` placeholder is gone. 175 tests, check 0/0, build OK.
+phases. The `secret-N` placeholder is gone. + **faction technologies** (faction depth
+sub-cycle 3a): 48 faction techs (exactly 2 per faction × 24; Keleres excluded as a Codex
+faction) folded into the same `technologies.ts` via optional `factionId` + `replaces`, taking
+the catalog to 81. `getResearchableTechs` now filters by ownership and drops generic unit
+upgrades a faction sheet supersedes; `App.svelte` feeds `ResearchPicker` that filtered candidate
+set (the board editor and reference still see all 81). `TECH_GROUPS` gained a Faction group; the
+reference tech tab splits faction techs by owning faction so an opponent's tech is findable.
+The `unit-upgrade ⟺ color:'none'` invariant is now one-way — Nekro's Valefar Assimilators are
+colourless *ability* cards. 191 tests, check 0/0, build OK.
 
 Full history lives in `docs/superpowers/specs/` and `docs/superpowers/plans/` (esp. the
 `2026-07-24-*` faction-breadth, planet-catalog, and tech-tree files, the
-`2026-07-27-*` public-objectives pair, and the `2026-07-28-*` secret-objectives pair) and
-git log.
+`2026-07-27-*` public-objectives pair, the `2026-07-28-*` secret-objectives pair, and the
+`2026-08-04`/`2026-08-05` faction-technologies pair) and git log.
 
 ## Next cycles (each: brainstorm → spec → plan → build)
 
@@ -81,23 +94,31 @@ Faction depth is split into three sub-cycles (~161 content entries and three dis
 models — too big for one spec, same reasoning as the objectives 2a/2b split). Counts sourced
 from AsyncTI4:
 
-1. **3a — Faction technologies** (52 techs across 25 factions, incl. 14 unit upgrades). Pure
-   extension of the existing tech tree: add a `factionId` field, filter `getResearchableTechs`
-   to generic + your own faction's, add a Faction group to `ResearchPicker` + the tech
-   reference tab. No new state — `technologyIds` already carries them.
-2. **3b — Leaders** (83: 28 agents, 26 commanders, 29 heroes, each with an unlock condition).
+3a (faction technologies) is **done** — see State above.
+
+1. **3b — Leaders** (83: 28 agents, 26 commanders, 29 heroes, each with an unlock condition).
    The biggest of the three: replaces the unused 3-boolean `LeaderState` stub with real
    per-leader unlock / exhaust / purge state, adds a LeaderPanel and unlock reminders.
-3. **3c — Mechs** (26 faction mechs with stats + deploy abilities). Mostly reference-shaped,
+2. **3c — Mechs** (26 faction mechs with stats + deploy abilities). Mostly reference-shaped,
    since the app tracks no unit counts; faction flagships (27) fold in cheaply if wanted —
    two objectives already reference them.
-4. Trait-aware reminders (planets now carry traits)
-5. Action + agenda card references
-6. UI redesign
+3. Trait-aware reminders (planets now carry traits)
+4. Action + agenda card references
+5. UI redesign
 
-Deferred polish (non-blocking): consider a Zod `.refine()` enforcing the
-`unit-upgrade ⟺ color:'none'` invariant; a copyright pass over the pre-existing
-(non-tech-tree, non-objective) content summaries.
+Deferred polish (non-blocking): a copyright pass over the pre-existing (non-tech-tree,
+non-objective) content summaries — fold in the closest 3a calls while there
+(`non-euclidean-shielding`, `supercharge`, `voidwatch`). Verify the two Valefar Assimilator
+summaries against the wiki: they also have Ω printings and ours were not checked. **The board
+editor's technology list is now 81 flat, ungrouped, unlabelled buttons** with no search and no
+faction attribution (`BoardEditor.svelte`) — it must stay unfiltered (Nekro legitimately gains
+rivals' techs, and it is the escape hatch that makes research filtering safe), so group it with
+`TECH_GROUPS` or add the query input the planet section already has; natural fit for the UI
+redesign. Per-faction reference groups are not prereq-sorted the way generic groups are.
+
+Retired by the 3a cycle: the proposed Zod `.refine()` for `unit-upgrade ⟺ color:'none'` — Nekro's
+colourless ability cards prove the strict form wrong, and the content test now asserts the
+one-way direction instead.
 
 Retired by the 2b cycle: the duplicated `TECH_GROUPS` array now lives in `src/lib/techGroups.ts`
 and is shared by `ResearchPicker.svelte` + `ReferenceBrowser.svelte`; the grouped-render block
