@@ -145,7 +145,7 @@ export const factions: Faction[] = [
       "Propagation: you can't research; each research you'd do gives you 3 command tokens instead.",
     ],
     starting: {
-      tokens, techIds: ['dacxive-animators'],
+      tokens, techIds: ['dacxive-animators', 'valefar-assimilator-x', 'valefar-assimilator-y'],
       planets: [p('mordai-ii', 'Mordai II', 4, 0)],
       startingUnits: ['1 Dreadnought', '1 Carrier', '1 Cruiser', '2 Fighters', '2 Infantry', '1 Space Dock'],
       commodities: 3, tradeGoods: 0,

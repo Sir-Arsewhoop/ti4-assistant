@@ -50,6 +50,7 @@
   )
   const researchResults = $derived(gameState ? getResearchableTechs(gameState, content.technologies) : [])
   const researchableIds = $derived(new Set(researchResults.filter((r) => r.researchable).map((r) => r.techId)))
+  const researchCandidateIds = $derived(new Set(researchResults.map((r) => r.techId)))
   const actions = $derived(gameState ? getAvailableActions(gameState, { componentActionSources }) : [])
   const scorablePublics = $derived(gameState ? getScorablePublicObjectives(gameState, content.publicObjectives) : [])
   const stageTwoScorable = $derived(scorablePublics.some((o) => o.stage === 'II'))
@@ -214,7 +215,7 @@
   />
   {#if researchOpen && gameState}
     <ResearchPicker
-      technologies={content.technologies}
+      technologies={content.technologies.filter((t) => researchCandidateIds.has(t.id))}
       ownedIds={new Set(gameState.technologyIds)}
       {researchableIds}
       onResearch={(techId, name) => { store?.dispatch({ type: 'researchTechnology', techId, name }); researchOpen = false }}

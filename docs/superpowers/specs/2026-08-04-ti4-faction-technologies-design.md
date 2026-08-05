@@ -77,9 +77,10 @@ technologies plus **48 faction technologies — exactly 2 for each of the 24 fac
 **Sourcing.** From AsyncTI4 `data/technologies/pok.json`, taking entries that carry a `faction`
 key. Notes on reading that file, all verified:
 
-- It yields 52 such entries. Four belong to Nekro, but two of those are internal placeholders
-  (`???\_NULL\_REFERENCE\_???`, `???\_ERROR\_ERROR\_???`) standing in for the assimilator tokens,
-  not real technologies. Excluding them leaves 50.
+- It yields 52 such entries. Four belong to Nekro, but two of those are joke entries with
+  corrupted names (`???\_NULL\_REFERENCE\_???`, `???\_ERROR\_ERROR\_???`) — fitting the Nekro
+  Virus theme — carrying ability text that matches no printed card. Nekro's real faction
+  technologies are its two Valefar Assimilators, so excluding the pair leaves 50.
 - The remaining two belong to `keleres`, a 25th faction key that is out of scope. That leaves
   the 48 this cycle ships, matching the count of distinct techs referenced by the 24 factions'
   own `factionTech` lists.
@@ -98,6 +99,11 @@ material and must not be copied through. Forty-eight new summaries make this the
 copyright surface of any cycle so far, and reviews in the two previous cycles each caught
 wording that had drifted toward the printed cards. It gets explicit attention in both
 implementation and review: distinct sentence structure and word choice, same mechanical meaning.
+
+**Expansion split.** Of the 48, 34 are `base` and 14 are `pok` — the PoK 14 being exactly the
+two techs each belonging to the seven PoK factions (Argent, Empyrean, Mahact, Naaz-Rokha, Nomad,
+Titans, Vuil'raith). Five carry a component action (`hasAction: true`): Wormhole Generator,
+Production Biomes, Lazax Gate Folding, Mageon Implants, and Vortex.
 
 **Starting technologies need no change.** No faction begins the game holding a faction
 technology — verified across all 24 in AsyncTI4's faction data — so the existing all-generic

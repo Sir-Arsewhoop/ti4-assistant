@@ -88,7 +88,7 @@ export const technologies: Technology[] = [
 
   // ── Embers of Muaat ──
   { id: 'prototype-war-sun-ii', name: 'Prototype War Sun II', color: 'none', type: 'unit-upgrade', expansion: 'base', prerequisites: ['red', 'red', 'red', 'yellow'], summary: 'Upgraded Prototype War Sun — cheaper at cost 10 and faster at move 3, Combat 3 (x3), Sustain Damage and Bombardment; enemies in its system lose Planetary Shield.', hasAction: false, factionId: 'muaat', replaces: 'war-sun' },
-  { id: 'magmus-reactor', name: 'Magmus Reactor', color: 'red', type: 'ability', expansion: 'base', prerequisites: ['red', 'red'], summary: 'Supernovas stop being walls — your ships may enter them, and any holding your units produce as if a unit with Production 5.', hasAction: false, factionId: 'muaat' },
+  { id: 'magmus-reactor', name: 'Magmus Reactor', color: 'red', type: 'ability', expansion: 'base', prerequisites: ['red', 'red'], summary: 'Supernovas stop being walls — your ships may enter them. Produce in a system that holds a war sun or borders a supernova and you collect a trade good.', hasAction: false, factionId: 'muaat' },
 
   // ── Naalu Collective ──
   { id: 'hybrid-crystal-fighter-ii', name: 'Hybrid Crystal Fighter II', color: 'none', type: 'unit-upgrade', expansion: 'base', prerequisites: ['green', 'blue'], summary: 'Upgraded Hybrid Crystal Fighter — Combat 7, moves on its own, and overflow fighters weigh only half a ship against your fleet pool.', hasAction: false, factionId: 'naalu', replaces: 'fighter-ii' },
@@ -107,7 +107,7 @@ export const technologies: Technology[] = [
   { id: 'temporal-command-suite', name: 'Temporal Command Suite', color: 'yellow', type: 'ability', expansion: 'pok', prerequisites: ['yellow'], summary: 'When any agent exhausts, exhaust this to stand it back up — and if it was a rival\'s, you may trade with them off the back of it.', hasAction: false, factionId: 'nomad' },
 
   // ── Clan of Saar ──
-  { id: 'chaos-mapping', name: 'Chaos Mapping', color: 'blue', type: 'ability', expansion: 'base', prerequisites: ['blue'], summary: 'Asteroid fields holding your ships are off-limits to rivals, and each action-phase turn of yours opens with a free unit built wherever you have Production.', hasAction: false, factionId: 'saar' },
+  { id: 'chaos-mapping', name: 'Chaos Mapping', color: 'blue', type: 'ability', expansion: 'base', prerequisites: ['blue'], summary: 'Asteroid fields holding your ships are off-limits to rivals, and each of your action-phase turns you may produce 1 unit where you have Production, paying its cost as normal.', hasAction: false, factionId: 'saar' },
   { id: 'floating-factory-ii', name: 'Floating Factory II', color: 'none', type: 'unit-upgrade', expansion: 'base', prerequisites: ['yellow', 'yellow'], summary: 'Upgraded Floating Factory — Production 7, move 2, capacity 5; it sits in space rather than on a planet and manoeuvres like a ship, but a blockade destroys it.', hasAction: false, factionId: 'saar', replaces: 'space-dock-ii' },
 
   // ── Sardakk N'orr ──
@@ -135,7 +135,7 @@ export const technologies: Technology[] = [
   { id: 'nullification-field', name: 'Nullification Field', color: 'yellow', type: 'ability', expansion: 'base', prerequisites: ['yellow', 'yellow'], summary: 'When a rival activates into your ships, exhaust and spend a strategy token to end their turn on the spot.', hasAction: false, factionId: 'xxcha' },
 
   // ── Yin Brotherhood ──
-  { id: 'yin-spinner-omega', name: 'Yin Spinner Omega', color: 'green', type: 'ability', expansion: 'base', prerequisites: ['green', 'green'], summary: 'Each time you produce, add up to 2 free infantry on a planet you hold or alongside your ships.', hasAction: false, factionId: 'yin' },
+  { id: 'yin-spinner', name: 'Yin Spinner', color: 'green', type: 'ability', expansion: 'base', prerequisites: ['green', 'green'], summary: 'Whenever your units produce, plant 1 free infantry on a planet you hold in that same system.', hasAction: false, factionId: 'yin' },
   { id: 'impulse-core', name: 'Impulse Core', color: 'yellow', type: 'ability', expansion: 'base', prerequisites: ['yellow', 'yellow'], summary: 'Opening a space battle, scuttle one of your cruisers or destroyers to land a hit that must fall on a non-fighter ship where possible.', hasAction: false, factionId: 'yin' },
 
   // ── Yssaril Tribes ──

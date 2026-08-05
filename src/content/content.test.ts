@@ -103,7 +103,7 @@ describe('content registry', () => {
     expect(byId.get('dreadnought-ii')!.prerequisites).toEqual(['blue', 'blue', 'yellow'])
   })
 
-  it('flags component actions only on sling-relay and x-89-bacterial-weapon', () => {
+  it('flags component actions only on the two generic component-action techs', () => {
     const withAction = content.technologies.filter((t) => !t.factionId && t.hasAction).map((t) => t.id).sort()
     expect(withAction).toEqual(['sling-relay', 'x-89-bacterial-weapon'])
   })

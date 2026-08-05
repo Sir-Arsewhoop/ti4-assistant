@@ -66,4 +66,18 @@ describe('App', () => {
     await fireEvent.click(screen.getByRole('button', { name: /Open menu/ }))
     expect(screen.getByRole('button', { name: /Close menu/ })).toBeTruthy()
   })
+
+  it('limits the research picker to the player\'s own faction techs, excluding generics their sheet supersedes', async () => {
+    render(App)
+    await fireEvent.change(screen.getByLabelText('Faction'), { target: { value: 'sol' } })
+    await fireEvent.click(screen.getByRole('button', { name: /Start game/ }))
+    await fireEvent.click(screen.getByRole('button', { name: /Advance phase/ })) // strategy -> action
+    await fireEvent.click(screen.getByRole('button', { name: /Take: Research technology/ }))
+    // Sol's own faction tech is offered.
+    expect(screen.getByRole('button', { name: /research Advanced Carrier II/i })).toBeTruthy()
+    // Another faction's tech (Naalu) is not.
+    expect(screen.queryByRole('button', { name: /research Neuroglaive/i })).toBeNull()
+    // The generic Sol's sheet supersedes is not.
+    expect(screen.queryByRole('button', { name: /research Carrier II/i })).toBeNull()
+  })
 })

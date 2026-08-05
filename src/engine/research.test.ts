@@ -95,14 +95,8 @@ describe('getResearchableTechs faction filtering', () => {
     expect(ready('sol', ['antimass-deflectors', 'gravity-drive']).has('advanced-carrier-ii')).toBe(true)
   })
 
-  it('treats Nekro\'s colorless assimilators as free to research and icon-less', () => {
-    const ready = new Set(
-      getResearchableTechs({ ...state(), factionId: 'nekro' }, techs)
-        .filter((r) => r.researchable)
-        .map((r) => r.techId),
-    )
-    expect(ready.has('valefar-assimilator-x')).toBe(true) // no prerequisites
-    // Owning one supplies no color icon, so a 1-blue tech stays out of reach.
+  it('treats colorless faction techs as supplying no prerequisite icons', () => {
+    // Owning a colorless tech must not contribute a color icon, so a 1-blue tech stays out of reach.
     const withAssimilator = new Set(
       getResearchableTechs({ ...state({ technologyIds: ['valefar-assimilator-x'] }), factionId: 'nekro' }, techs)
         .filter((r) => r.researchable)

@@ -71,6 +71,7 @@ describe('ReferenceBrowser', () => {
     expect(screen.getByText('Federation of Sol')).toBeTruthy()
     expect(screen.getByText('Advanced Carrier II')).toBeTruthy()
     expect(screen.getByText('Unit Upgrades')).toBeTruthy() // generic groups still render
+    expect(screen.queryByText('Faction')).toBeNull() // lumped group excluded; split by owner instead
   })
 
   it('groups the objectives tab by stage', async () => {
