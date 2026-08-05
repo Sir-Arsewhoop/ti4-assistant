@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { content, getFaction } from './index'
-import { objectiveSchema, secretObjectiveSchema } from './schema'
+import { objectiveSchema, secretObjectiveSchema, technologySchema } from './schema'
 
 describe('content registry', () => {
   it('validates and exposes all 8 strategy cards', () => {
@@ -82,10 +82,9 @@ describe('content registry', () => {
     expect(content.technologies.filter((t) => t.type === 'unit-upgrade')).toHaveLength(9)
   })
 
-  it('keeps unit-upgrade and colorless in lockstep, and abilities colored', () => {
+  it('keeps every unit upgrade colorless (colorless abilities are allowed)', () => {
     for (const t of content.technologies) {
       if (t.type === 'unit-upgrade') expect(t.color).toBe('none')
-      else expect(t.color).not.toBe('none')
     }
   })
 
@@ -170,5 +169,29 @@ describe('content registry', () => {
   it('rejects a secret worth more than 1 point', () => {
     const bad = { id: 'x', name: 'X', points: 2, phase: 'status', expansion: 'base', summary: 'y' }
     expect(secretObjectiveSchema.safeParse(bad).success).toBe(false)
+  })
+
+  it('accepts an optional factionId and replaces on a technology', () => {
+    const withFaction = {
+      id: 'x', name: 'X', color: 'none', type: 'unit-upgrade', expansion: 'base',
+      prerequisites: ['blue', 'blue'], summary: 'y', hasAction: false,
+      factionId: 'sol', replaces: 'carrier-ii',
+    }
+    const parsed = technologySchema.safeParse(withFaction)
+    expect(parsed.success).toBe(true)
+    if (parsed.success) {
+      expect(parsed.data.factionId).toBe('sol')
+      expect(parsed.data.replaces).toBe('carrier-ii')
+    }
+  })
+
+  it('still accepts a generic technology with neither field', () => {
+    const generic = {
+      id: 'g', name: 'G', color: 'blue', type: 'ability', expansion: 'base',
+      prerequisites: [], summary: 'y', hasAction: false,
+    }
+    const parsed = technologySchema.safeParse(generic)
+    expect(parsed.success).toBe(true)
+    if (parsed.success) expect(parsed.data.factionId).toBeUndefined()
   })
 })

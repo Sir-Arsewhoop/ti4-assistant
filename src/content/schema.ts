@@ -31,6 +31,8 @@ export const technologySchema = z.object({
   type: z.enum(['ability', 'unit-upgrade']),
   expansion: z.enum(['base', 'pok']),
   prerequisites: z.array(z.enum(['blue', 'green', 'yellow', 'red'])),
+  factionId: z.string().optional(),
+  replaces: z.string().optional(),
   summary: z.string(),
   hasAction: z.boolean().default(false),
 })
