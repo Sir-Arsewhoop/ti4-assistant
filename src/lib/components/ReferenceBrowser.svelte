@@ -44,21 +44,29 @@
   )
   const entries = $derived(all.filter((e) => e.title.toLowerCase().includes(q.toLowerCase())))
 
-  const techGroups = $derived(
-    TECH_GROUPS.map((g) => ({
+  const techEntry = (t: Technology) => ({
+    id: t.id,
+    title: t.name,
+    summary: t.summary,
+    detail: `${t.type === 'unit-upgrade' ? 'Unit upgrade' : t.color} · ${t.expansion.toUpperCase()} · prereqs: ${t.prerequisites.join(', ') || 'none'}\n${t.summary}`,
+  })
+  const matchesQuery = (t: Technology) => t.name.toLowerCase().includes(q.toLowerCase())
+
+  const techGroups = $derived([
+    ...TECH_GROUPS.filter((g) => g.key !== 'faction').map((g) => ({
       key: g.key,
       label: g.label,
       entries: technologies
-        .filter((t) => g.match(t) && t.name.toLowerCase().includes(q.toLowerCase()))
+        .filter((t) => g.match(t) && matchesQuery(t))
         .sort((a, b) => a.prerequisites.length - b.prerequisites.length)
-        .map((t) => ({
-          id: t.id,
-          title: t.name,
-          summary: t.summary,
-          detail: `${t.type === 'unit-upgrade' ? 'Unit upgrade' : t.color} · ${t.expansion.toUpperCase()} · prereqs: ${t.prerequisites.join(', ') || 'none'}\n${t.summary}`,
-        })),
-    })).filter((g) => g.entries.length > 0),
-  )
+        .map(techEntry),
+    })),
+    ...factions.map((f) => ({
+      key: `faction-${f.id}`,
+      label: f.name,
+      entries: technologies.filter((t) => t.factionId === f.id && matchesQuery(t)).map(techEntry),
+    })),
+  ].filter((g) => g.entries.length > 0))
 
   const objectiveGroups = $derived(
     (['I', 'II'] as const)

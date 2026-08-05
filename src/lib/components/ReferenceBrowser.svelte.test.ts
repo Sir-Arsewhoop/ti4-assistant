@@ -10,6 +10,7 @@ const factions: Faction[] = [
 const technologies: Technology[] = [
   { id: 'plasma-scoring', name: 'Plasma Scoring', color: 'red', type: 'ability', expansion: 'base', prerequisites: [], summary: 'Add 1 die.', hasAction: false },
   { id: 'carrier-ii', name: 'Carrier II', color: 'none', type: 'unit-upgrade', expansion: 'base', prerequisites: ['blue', 'blue'], summary: 'Upgraded Carrier.', hasAction: false },
+  { id: 'advanced-carrier-ii', name: 'Advanced Carrier II', color: 'none', type: 'unit-upgrade', expansion: 'base', prerequisites: ['blue', 'blue'], summary: 'Upgraded carrier.', hasAction: false, factionId: 'sol', replaces: 'carrier-ii' },
 ]
 const strategyCards: StrategyCard[] = [{ initiative: 7, name: 'Technology', primary: 'Research.', secondary: 'Pay to research.' }]
 const publicObjectives: Objective[] = [
@@ -62,6 +63,14 @@ describe('ReferenceBrowser', () => {
     expect(screen.getByText('Warfare (red)')).toBeTruthy()
     expect(screen.getByText('Plasma Scoring')).toBeTruthy()
     expect(screen.getByText('Carrier II')).toBeTruthy()
+  })
+
+  it('groups faction technologies under their faction in the tech tab', async () => {
+    render(ReferenceBrowser, { props: { factions, technologies, strategyCards, publicObjectives, secretObjectives, planets } })
+    await fireEvent.click(screen.getByRole('button', { name: /Tech/ }))
+    expect(screen.getByText('Federation of Sol')).toBeTruthy()
+    expect(screen.getByText('Advanced Carrier II')).toBeTruthy()
+    expect(screen.getByText('Unit Upgrades')).toBeTruthy() // generic groups still render
   })
 
   it('groups the objectives tab by stage', async () => {
