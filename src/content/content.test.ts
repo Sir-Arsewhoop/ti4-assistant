@@ -75,11 +75,12 @@ describe('content registry', () => {
   })
 
   it('exposes the full 33-tech generic catalog (25 base + 8 PoK, 24 abilities + 9 unit upgrades)', () => {
-    expect(content.technologies).toHaveLength(33)
-    expect(content.technologies.filter((t) => t.expansion === 'base')).toHaveLength(25)
-    expect(content.technologies.filter((t) => t.expansion === 'pok')).toHaveLength(8)
-    expect(content.technologies.filter((t) => t.type === 'ability')).toHaveLength(24)
-    expect(content.technologies.filter((t) => t.type === 'unit-upgrade')).toHaveLength(9)
+    const generic = content.technologies.filter((t) => !t.factionId)
+    expect(generic).toHaveLength(33)
+    expect(generic.filter((t) => t.expansion === 'base')).toHaveLength(25)
+    expect(generic.filter((t) => t.expansion === 'pok')).toHaveLength(8)
+    expect(generic.filter((t) => t.type === 'ability')).toHaveLength(24)
+    expect(generic.filter((t) => t.type === 'unit-upgrade')).toHaveLength(9)
   })
 
   it('keeps every unit upgrade colorless (colorless abilities are allowed)', () => {
@@ -103,7 +104,7 @@ describe('content registry', () => {
   })
 
   it('flags component actions only on sling-relay and x-89-bacterial-weapon', () => {
-    const withAction = content.technologies.filter((t) => t.hasAction).map((t) => t.id).sort()
+    const withAction = content.technologies.filter((t) => !t.factionId && t.hasAction).map((t) => t.id).sort()
     expect(withAction).toEqual(['sling-relay', 'x-89-bacterial-weapon'])
   })
 
@@ -193,5 +194,57 @@ describe('content registry', () => {
     const parsed = technologySchema.safeParse(generic)
     expect(parsed.success).toBe(true)
     if (parsed.success) expect(parsed.data.factionId).toBeUndefined()
+  })
+
+  it('carries 48 faction technologies, exactly 2 per faction', () => {
+    const faction = content.technologies.filter((t) => t.factionId)
+    expect(content.technologies).toHaveLength(81)
+    expect(faction).toHaveLength(48)
+    const counts = new Map<string, number>()
+    for (const t of faction) counts.set(t.factionId!, (counts.get(t.factionId!) ?? 0) + 1)
+    expect(counts.size).toBe(24)
+    for (const [, n] of counts) expect(n).toBe(2)
+  })
+
+  it('splits faction technologies 34 base / 14 PoK', () => {
+    const faction = content.technologies.filter((t) => t.factionId)
+    expect(faction.filter((t) => t.expansion === 'base')).toHaveLength(34)
+    expect(faction.filter((t) => t.expansion === 'pok')).toHaveLength(14)
+  })
+
+  it('gives every faction technology an owner that exists', () => {
+    const factionIds = new Set(content.factions.map((f) => f.id))
+    for (const t of content.technologies.filter((t) => t.factionId)) {
+      expect(factionIds.has(t.factionId!)).toBe(true)
+    }
+  })
+
+  it('points every replaces at a real generic unit upgrade', () => {
+    const genericUpgrades = new Set(
+      content.technologies.filter((t) => !t.factionId && t.type === 'unit-upgrade').map((t) => t.id),
+    )
+    const withReplaces = content.technologies.filter((t) => t.replaces)
+    expect(withReplaces).toHaveLength(13)
+    for (const t of withReplaces) {
+      expect(t.factionId).toBeTruthy()
+      expect(genericUpgrades.has(t.replaces!)).toBe(true)
+    }
+  })
+
+  it('has 14 faction unit upgrades and flags the 5 with component actions', () => {
+    const faction = content.technologies.filter((t) => t.factionId)
+    expect(faction.filter((t) => t.type === 'unit-upgrade')).toHaveLength(14)
+    expect(faction.filter((t) => t.hasAction).map((t) => t.id).sort()).toEqual([
+      'lazax-gate-folding', 'mageon-implants', 'production-biomes', 'vortex', 'wormhole-generator',
+    ])
+  })
+
+  it('excludes Keleres and the Nekro joke entries', () => {
+    const ids = content.technologies.map((t) => t.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    expect(ids.some((id) => id.includes('keleres'))).toBe(false)
+    expect(ids.some((id) => id.includes('null-reference') || id.includes('error-error'))).toBe(false)
+    const nekro = content.technologies.filter((t) => t.factionId === 'nekro').map((t) => t.id).sort()
+    expect(nekro).toEqual(['valefar-assimilator-x', 'valefar-assimilator-y'])
   })
 })
