@@ -55,3 +55,59 @@ describe('getResearchableTechs', () => {
     expect(ready(state({ technologyIds: ['carrier-ii'] })).has('gravity-drive')).toBe(false)
   })
 })
+
+describe('getResearchableTechs faction filtering', () => {
+  const idsFor = (factionId: string, overrides: Partial<GameState> = {}) =>
+    getResearchableTechs({ ...state(overrides), factionId }, techs).map((r) => r.techId)
+
+  it('offers your own faction techs and never another faction\'s', () => {
+    const sol = idsFor('sol')
+    expect(sol).toContain('advanced-carrier-ii')
+    expect(sol).toContain('spec-ops-ii')
+    expect(sol).not.toContain('super-dreadnought-ii') // L1Z1X
+    expect(sol).not.toContain('neuroglaive') // Naalu
+  })
+
+  it('drops a generic unit upgrade the faction sheet supersedes', () => {
+    // Sol's Advanced Carrier II replaces Carrier II, and Spec Ops II replaces Infantry II.
+    const sol = idsFor('sol')
+    expect(sol).not.toContain('carrier-ii')
+    expect(sol).not.toContain('infantry-ii')
+    // A faction with no carrier variant still sees the generic.
+    expect(idsFor('hacan')).toContain('carrier-ii')
+  })
+
+  it('keeps generics that nothing of yours replaces', () => {
+    const sol = idsFor('sol')
+    expect(sol).toContain('cruiser-ii')
+    expect(sol).toContain('war-sun')
+  })
+
+  it('applies the same prerequisites to a faction unit upgrade as to the generic', () => {
+    const ready = (factionId: string, ids: string[]) =>
+      new Set(
+        getResearchableTechs({ ...state({ technologyIds: ids }), factionId }, techs)
+          .filter((r) => r.researchable)
+          .map((r) => r.techId),
+      )
+    // Advanced Carrier II needs 2 blue, exactly as Carrier II does.
+    expect(ready('sol', ['antimass-deflectors']).has('advanced-carrier-ii')).toBe(false)
+    expect(ready('sol', ['antimass-deflectors', 'gravity-drive']).has('advanced-carrier-ii')).toBe(true)
+  })
+
+  it('treats Nekro\'s colorless assimilators as free to research and icon-less', () => {
+    const ready = new Set(
+      getResearchableTechs({ ...state(), factionId: 'nekro' }, techs)
+        .filter((r) => r.researchable)
+        .map((r) => r.techId),
+    )
+    expect(ready.has('valefar-assimilator-x')).toBe(true) // no prerequisites
+    // Owning one supplies no color icon, so a 1-blue tech stays out of reach.
+    const withAssimilator = new Set(
+      getResearchableTechs({ ...state({ technologyIds: ['valefar-assimilator-x'] }), factionId: 'nekro' }, techs)
+        .filter((r) => r.researchable)
+        .map((r) => r.techId),
+    )
+    expect(withAssimilator.has('gravity-drive')).toBe(false)
+  })
+})

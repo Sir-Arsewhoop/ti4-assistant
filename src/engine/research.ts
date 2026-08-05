@@ -18,8 +18,15 @@ export function getResearchableTechs(
     if (p.techSpecialty && !p.exhausted) supply[p.techSpecialty]++
   }
 
-  return technologies
-    .filter((t) => !owned.has(t.id))
+  // A faction may only research its own faction techs, and its faction sheet
+  // replaces some generic unit upgrades outright — those are not researchable at all.
+  const mine = technologies.filter((t) => !t.factionId || t.factionId === state.factionId)
+  const superseded = new Set(
+    mine.filter((t) => t.factionId && t.replaces).map((t) => t.replaces as string),
+  )
+
+  return mine
+    .filter((t) => !owned.has(t.id) && !superseded.has(t.id))
     .map((t) => {
       const need: Record<Color, number> = { blue: 0, green: 0, yellow: 0, red: 0 }
       for (const c of t.prerequisites) need[c]++
